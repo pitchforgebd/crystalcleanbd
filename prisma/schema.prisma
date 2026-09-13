@@ -1,0 +1,355 @@
+// Phase 2 — Crystal Clean Service schema (MySQL via Prisma)
+// All shapes mirror src/lib/types.ts and src/lib/admin-types.ts.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// -------- Settings (single-row tables) --------
+
+model SiteSettings {
+  id               Int      @id @default(1)
+  brandName        String   @db.VarChar(160)
+  tagline          String   @db.VarChar(255)
+  email            String   @db.VarChar(160)
+  phone            String   @db.VarChar(64)
+  address          String   @db.Text
+  mainLogo         String   @map("mainLogoLabel") @db.VarChar(500)
+  footerLogo       String   @map("footerLogoLabel") @db.VarChar(500)
+  favicon          String   @map("faviconLabel") @db.VarChar(500)
+  /// Rendered logo height in pixels — the width follows the image ratio.
+  mainLogoHeight   Int      @default(32)
+  footerLogoHeight Int      @default(40)
+  updatedAt        DateTime @updatedAt
+}
+
+model SeoSettings {
+  id                Int      @id @default(1)
+  siteTitle         String   @db.VarChar(255)
+  defaultDescription String  @db.VarChar(500)
+  ogImageLabel      String   @db.VarChar(160)
+  twitterHandle     String   @db.VarChar(64)
+  robotsIndex       Boolean  @default(true)
+  canonicalBase     String   @db.VarChar(255)
+  updatedAt         DateTime @updatedAt
+}
+
+model PageSeo {
+  id          String   @id @default(cuid())
+  page        String   @db.VarChar(80)
+  path        String   @unique @db.VarChar(255)
+  title       String   @db.VarChar(255)
+  description String   @db.VarChar(500)
+  ogImage     String?  @db.VarChar(255)
+  canonical   String?  @db.VarChar(255)
+  updatedAt   DateTime @updatedAt
+}
+
+model HomepageSection {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(80)
+  name      String   @db.VarChar(160)
+  enabled   Boolean  @default(true)
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// -------- Hero --------
+
+model HeroSlide {
+  id          String   @id @default(cuid())
+  image       String   @db.VarChar(1000)
+  imageAlt    String   @db.VarChar(255)
+  heading     String   @db.VarChar(255)
+  subheading  String   @db.VarChar(255)
+  text        String   @db.Text
+  ctaLabel    String   @db.VarChar(80)
+  ctaHref     String   @db.VarChar(255)
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+// -------- Services --------
+
+enum ServiceIcon {
+  spark
+  building
+  home
+  window
+  carpet
+  sanitize
+}
+
+model Service {
+  id               String      @id @default(cuid())
+  name             String      @db.VarChar(160)
+  slug             String      @unique @db.VarChar(160)
+  category         String      @db.VarChar(80)
+  icon             ServiceIcon @default(spark)
+  featuredImage    String      @db.VarChar(1000)
+  imageAlt         String      @db.VarChar(255)
+  shortDescription String      @db.VarChar(500)
+  fullDescription  String      @db.Text
+  // JSON-encoded string arrays
+  workScope        Json
+  outcomes         Json
+  features         Json
+  packageTags      Json
+  availability     String      @db.Text
+  rating           Float       @default(0)
+  reviewCount      Int         @default(0)
+  featured         Boolean     @default(false)
+  popular          Boolean     @default(false)
+  order            Int         @default(0)
+  active           Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([active, order])
+  @@index([featured])
+  @@index([popular])
+}
+
+model ServiceReview {
+  id          String   @id @default(cuid())
+  serviceSlug String   @db.VarChar(160)
+  name        String   @db.VarChar(160)
+  rating      Int
+  comment     String   @db.Text
+  createdAt   DateTime
+  approved    Boolean  @default(true)
+
+  @@index([serviceSlug])
+}
+
+// -------- Statistics / Testimonials / Clients --------
+
+model Statistic {
+  id        String   @id @default(cuid())
+  label     String   @db.VarChar(160)
+  value     Int
+  suffix    String   @db.VarChar(16)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(160)
+  role      String   @db.VarChar(160)
+  quote     String   @db.Text
+  avatarSrc String   @db.VarChar(1000)
+  avatarAlt String   @db.VarChar(255)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(160)
+  logoSrc   String   @db.VarChar(1000)
+  logoAlt   String   @db.VarChar(255)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+// -------- Gallery --------
+
+model GalleryImage {
+  id          String   @id @default(cuid())
+  title       String   @db.VarChar(160)
+  alt         String   @db.VarChar(255)
+  description String   @db.Text
+  src         String   @db.VarChar(1000)
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model GalleryVideo {
+  id          String   @id @default(cuid())
+  title       String   @db.VarChar(160)
+  description String   @db.Text
+  youtubeId   String   @db.VarChar(64)
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+// -------- Blog --------
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(160)
+  slug        String   @unique @db.VarChar(160)
+  description String   @db.VarChar(500)
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id              String   @id @default(cuid())
+  title           String   @db.VarChar(255)
+  slug            String   @unique @db.VarChar(255)
+  excerpt         String   @db.VarChar(500)
+  content         String   @db.Text
+  featuredImage   String   @db.VarChar(1000)
+  imageAlt        String   @db.VarChar(255)
+  author          String   @db.VarChar(160)
+  publishedAt     DateTime
+  categorySlug    String   @db.VarChar(160)
+  featured        Boolean  @default(false)
+  tags            Json
+  seoTitle        String?  @db.VarChar(255)
+  metaDescription String?  @db.VarChar(500)
+  ogImage         String?  @db.VarChar(1000)
+  canonical       String?  @db.VarChar(255)
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([categorySlug])
+  @@index([featured])
+  @@index([published, publishedAt])
+}
+
+// -------- FAQ --------
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String   @db.VarChar(500)
+  answer    String   @db.Text
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+// -------- Social links --------
+
+enum SocialPlatform {
+  facebook
+  instagram
+  youtube
+  linkedin
+  tiktok
+  whatsapp
+}
+
+model SocialLink {
+  id        String         @id @default(cuid())
+  platform  SocialPlatform
+  label     String         @db.VarChar(80)
+  href      String         @db.VarChar(1000)
+  order     Int            @default(0)
+  active    Boolean        @default(true)
+  updatedAt DateTime       @updatedAt
+
+  @@index([active, order])
+}
+
+// -------- About / Concern / Legal (single-row content blocks) --------
+
+model AboutContent {
+  id               Int      @id @default(1)
+  introduction     String   @db.Text
+  mission          String   @db.Text
+  vision           String   @db.Text
+  proprietorMessage String  @db.Text
+  teamImage        String   @db.VarChar(1000)
+  teamImageAlt     String   @db.VarChar(255)
+  workspaceImage   String   @db.VarChar(1000)
+  workspaceImageAlt String  @db.VarChar(255)
+  contactImage     String   @db.VarChar(1000)
+  contactImageAlt  String   @db.VarChar(255)
+  values           Json
+  whyChooseUs      Json
+  updatedAt        DateTime @updatedAt
+}
+
+model ConcernContent {
+  id            Int      @id @default(1)
+  name          String   @db.VarChar(160)
+  tagline       String   @db.VarChar(255)
+  introduction  String   @db.Text
+  brandingNote  String   @db.Text
+  image         String   @db.VarChar(1000)
+  imageAlt      String   @db.VarChar(255)
+  ctaLabel      String   @db.VarChar(80)
+  ctaHref       String   @db.VarChar(255)
+  features      Json
+  updatedAt     DateTime @updatedAt
+}
+
+enum LegalPageKind {
+  terms
+  privacy
+}
+
+model LegalPage {
+  kind      LegalPageKind @id
+  title     String        @db.VarChar(160)
+  updated   DateTime
+  sections  Json
+  updatedAt DateTime      @updatedAt
+}
+
+// -------- Contact messages --------
+
+enum ContactMessageStatus {
+  new
+  read
+  archived
+}
+
+model ContactMessage {
+  id        String              @id @default(cuid())
+  name      String              @db.VarChar(160)
+  email     String              @db.VarChar(160)
+  phone     String              @db.VarChar(64)
+  subject   String              @db.VarChar(255)
+  message   String              @db.Text
+  status    ContactMessageStatus @default(new)
+  createdAt DateTime            @default(now())
+
+  @@index([status, createdAt])
+}
+
+// -------- Admin users (auth fills in Phase 3) --------
+
+enum AdminRole {
+  owner
+  editor
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  name         String    @db.VarChar(160)
+  email        String    @unique @db.VarChar(160)
+  role         AdminRole @default(editor)
+  passwordHash String?   @db.VarChar(255)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}

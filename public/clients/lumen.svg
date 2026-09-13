@@ -1,0 +1,7 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="200" height="64" viewBox="0 0 200 64" role="img" aria-label="Lumen Retail Co.">
+  <rect width="200" height="64" rx="8" fill="#f3f7f8"/>
+  <circle cx="28" cy="32" r="14" fill="none" stroke="#1aa6b7" stroke-width="3"/>
+  <circle cx="28" cy="32" r="6" fill="#0c4a56"/>
+  <text x="52" y="30" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0c4a56">LUMEN</text>
+  <text x="52" y="46" font-family="Arial, sans-serif" font-size="10" fill="#4d646b">RETAIL CO.</text>
+</svg>

@@ -1,0 +1,17 @@
+---
+description: SEO rules
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: false
+---
+
+# SEO
+
+- Use semantic HTML and proper heading hierarchy.
+- Use dynamic metadata for important pages.
+- Support title, description, Open Graph and canonical URLs where appropriate.
+- Blog posts must have SEO-friendly slugs and metadata.
+- Implement sitemap and robots.txt.
+- Use meaningful image alt text.
+- Add structured data only where it is valid and useful.
+- Do not keyword-stuff content.
+- Do not invent SEO claims or business facts.

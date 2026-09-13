@@ -1,0 +1,16 @@
+---
+description: Admin dashboard and CMS rules
+globs: ["**/admin/**", "**/dashboard/**", "**/*.tsx", "**/*.ts"]
+alwaysApply: false
+---
+
+# Admin / CMS
+
+- Dashboard must be professional, responsive and practical.
+- Only include required management modules.
+- CRUD modules should provide appropriate list, create, edit, delete, status and ordering controls.
+- Use confirmation before destructive actions.
+- Show loading, empty, error and success states.
+- Admin UI is not a security boundary; enforce permissions on the server.
+- Dynamic website content must come from the CMS/database after backend integration.
+- Do not leave fake/mock production content after dynamic integration.

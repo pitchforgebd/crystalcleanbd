@@ -1,0 +1,19 @@
+---
+description: Security rules for backend, admin and public input
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: true
+---
+
+# Security
+
+- Never expose database credentials, SMTP credentials, auth secrets or private environment variables.
+- Never trust client-side validation alone.
+- Validate and sanitize server-side input.
+- Enforce authorization server-side; hiding UI controls is not authorization.
+- Use secure password hashing.
+- Protect admin routes and server operations.
+- Consider SQL injection, XSS, CSRF where applicable, abuse/rate limiting and file upload risks.
+- Validate uploaded file type and size.
+- Do not log passwords, tokens or sensitive user data.
+- Use environment variables for secrets and deployment-specific configuration.
+- Never weaken security just to make a feature work.

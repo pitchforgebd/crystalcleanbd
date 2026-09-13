@@ -1,0 +1,22 @@
+---
+description: Verification and testing rules
+alwaysApply: true
+---
+
+# Verification
+
+At the end of meaningful work, verify the affected scope.
+
+Preferred checks:
+- TypeScript check
+- Lint
+- Production build when appropriate
+- Affected routes/features
+- Relevant forms and interactions
+
+Rules:
+- Fix errors caused by the current change.
+- Do not disable lint/type checks to make the build pass.
+- Do not claim completion without verification.
+- If something cannot be verified, state that clearly.
+- Do not spend tokens testing unrelated parts of the project.

@@ -1,0 +1,12 @@
+---
+description: Git safety rules
+alwaysApply: true
+---
+
+# Git Safety
+
+- Inspect Git status before large changes.
+- Preserve existing user changes.
+- Never reset, force-push, rewrite history or delete unrelated work without explicit instruction.
+- Do not create commits unless the user requests commits.
+- Do not use destructive Git commands as a shortcut for fixing a coding problem.

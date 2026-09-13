@@ -1,0 +1,16 @@
+---
+description: TypeScript and code quality rules
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# TypeScript
+
+- Use strong typing.
+- Avoid `any` unless there is a documented technical reason.
+- Define clear types for component props, data and server responses.
+- Do not silence TypeScript errors merely to pass a build.
+- Avoid duplicated types when a shared type is appropriate.
+- Keep functions focused and readable.
+- Use meaningful names.
+- Remove dead code created during the current task.

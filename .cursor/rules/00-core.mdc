@@ -1,0 +1,20 @@
+---
+description: Core project rules for Crystal Clean Service
+alwaysApply: true
+---
+
+# Core Rules
+
+- Read `PROJECT_SPEC.md` and `TASK_STATE.md` before substantial work.
+- Follow the explicitly requested phase only.
+- Never start a future phase automatically.
+- Inspect existing code before creating or changing files.
+- Prefer reuse over duplication.
+- Make the smallest safe change that satisfies the request.
+- Do not invent business data, requirements, URLs, statistics, testimonials, addresses or credentials.
+- Do not break unrelated working features.
+- Do not make major architecture changes without explicit approval.
+- Do not add unnecessary dependencies.
+- Do not hide TypeScript, lint, build or runtime errors.
+- Never expose secrets.
+- After the requested task is complete: verify, update `TASK_STATE.md`, report status, and STOP.

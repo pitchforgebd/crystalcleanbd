@@ -1,0 +1,17 @@
+---
+description: Token and context efficiency rules for AI coding
+alwaysApply: true
+---
+
+# Token Efficiency
+
+- Do not repeatedly read the entire repository.
+- Search for relevant files/symbols first.
+- Read only the context required for the current task.
+- Reuse existing components and utilities.
+- Avoid rewriting unchanged files.
+- Avoid long explanations in code comments.
+- Do not generate unnecessary documentation.
+- Group closely related small changes when safe.
+- Do not perform unrelated cleanup.
+- Keep completion reports concise.

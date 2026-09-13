@@ -1,0 +1,27 @@
+---
+description: Phase-by-phase execution workflow
+alwaysApply: true
+---
+
+# Phase Workflow
+
+For every user-requested phase:
+
+1. Read relevant project documentation.
+2. Inspect only relevant files.
+3. Identify the exact scope.
+4. Make a short internal implementation plan.
+5. Implement only the requested phase.
+6. Verify the affected work.
+7. Fix errors caused by the work.
+8. Update `TASK_STATE.md`.
+9. Give a concise completion report.
+10. STOP.
+
+Never:
+- Continue into the next phase.
+- Add unrelated features.
+- Perform broad refactoring without permission.
+- Rebuild working sections unnecessarily.
+
+If a major architectural decision is required and cannot be safely inferred, ask before proceeding.

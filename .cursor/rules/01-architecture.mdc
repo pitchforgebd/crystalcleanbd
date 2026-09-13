@@ -1,0 +1,18 @@
+---
+description: Architecture and Next.js rules
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: false
+---
+
+# Architecture
+
+- Use the modern Next.js App Router.
+- Prefer Server Components unless client-side interactivity is genuinely required.
+- Use `use client` only when needed.
+- Prefer server-side data access for protected/private operations.
+- Use Route Handlers or Server Actions only where appropriate.
+- Keep UI, data access, validation and business logic reasonably separated.
+- Reuse existing utilities/components before creating new ones.
+- Do not introduce a state-management library unless the project genuinely requires it.
+- Do not rewrite working architecture without a clear reason.
+- Keep the application practical for cPanel + Node.js deployment.

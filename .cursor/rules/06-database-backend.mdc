@@ -1,0 +1,18 @@
+---
+description: MySQL, ORM and backend rules
+globs: ["**/prisma/**", "**/lib/**", "**/server/**", "**/app/api/**", "**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
+# Database / Backend
+
+- MySQL is the project database.
+- Use the project's selected ORM/data layer consistently.
+- Before adding a model/table/field, confirm it is required.
+- Avoid duplicate data and unnecessary relations.
+- Keep database access server-side.
+- Validate input before database writes.
+- Handle database errors safely.
+- Do not expose internal database errors to end users.
+- Do not invent migrations or destructive schema changes without need.
+- Preserve existing production-safe data unless a destructive change is explicitly approved.

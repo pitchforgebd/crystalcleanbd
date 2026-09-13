@@ -1,0 +1,24 @@
+---
+description: UI/UX rules for the Crystal Clean Service frontend and dashboard
+globs: ["**/*.tsx", "**/*.jsx", "**/*.css"]
+alwaysApply: false
+---
+
+# UI/UX
+
+The visual direction is:
+Professional + Premium + Modern + Trustworthy + Corporate.
+
+Rules:
+- Maintain one consistent design system.
+- Reuse typography, spacing, colors, buttons, cards, inputs and containers.
+- Design responsively for mobile, tablet, laptop and desktop.
+- Do not create generic AI-looking layouts.
+- Avoid excessive gradients, glassmorphism, shadows, rounded cards or decorative effects.
+- Use service-wise icons consistently.
+- Animations must be subtle, purposeful and lightweight.
+- Avoid animation that hurts performance or usability.
+- Include loading, empty, error and success states where relevant.
+- Forms must have clear labels and validation.
+- No horizontal overflow on normal screen sizes.
+- Accessibility must be considered for navigation, forms, buttons, images and interactive elements.

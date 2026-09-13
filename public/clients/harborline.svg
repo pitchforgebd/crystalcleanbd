@@ -1,0 +1,7 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="200" height="64" viewBox="0 0 200 64" role="img" aria-label="Harborline Residences">
+  <rect width="200" height="64" rx="8" fill="#f3f7f8"/>
+  <path d="M14 40c8-14 20-14 28 0" fill="none" stroke="#1aa6b7" stroke-width="3"/>
+  <circle cx="28" cy="28" r="5" fill="#0c4a56"/>
+  <text x="52" y="30" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0c4a56">HARBORLINE</text>
+  <text x="52" y="46" font-family="Arial, sans-serif" font-size="10" fill="#4d646b">RESIDENCES</text>
+</svg>

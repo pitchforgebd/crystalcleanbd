@@ -1,0 +1,13 @@
+---
+description: Rules against fake or incomplete implementation
+alwaysApply: true
+---
+
+# No Fake Completion
+
+- Do not call a feature complete if it is only visually mocked when functionality is required.
+- During frontend-only phases, mock data is allowed intentionally.
+- During backend/dynamic phases, replace required mock data with real functionality.
+- Do not leave fake buttons that imply unavailable functionality.
+- Do not fabricate API responses, database records or success messages.
+- Clearly distinguish mock/demo behavior from production functionality.

@@ -1,0 +1,18 @@
+---
+description: Performance and rendering rules
+globs: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
+alwaysApply: true
+---
+
+# Performance
+
+- Keep client-side JavaScript minimal.
+- Avoid unnecessary `useEffect`, `useState` and client fetching.
+- Avoid duplicate API/database requests.
+- Use optimized images and `next/image` where appropriate.
+- Lazy-load content/media when appropriate.
+- Avoid large dependencies for small features.
+- Avoid unnecessary animation libraries.
+- Prefer caching/revalidation when appropriate.
+- Keep pages fast and lightweight.
+- Do not optimize blindly; verify the actual bottleneck when possible.
