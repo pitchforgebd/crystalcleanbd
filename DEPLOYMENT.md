@@ -106,6 +106,13 @@ and restart again — the password is already hashed in the database.
 
 ### 3a. Building — a cPanel CPU quirk
 
+> **Important**: this host also crashed at plain **startup** (`node server.js`,
+> not just `next build`) until `next.config.ts` was replaced with
+> `next.config.mjs`. Next.js reads next.config on every start, and a `.ts`
+> config needs a transform to even be read — on this host that transform also
+> routed through the crashing SWC binary. Keep the config as `.mjs`/`.js`, not
+> `.ts`, on this host. This project's config already ships as `next.config.mjs`.
+
 On at least one observed cPanel host (CloudLinux, Intel Xeon E-2288G), `next build`
 crashes immediately with `Bus error (core dumped)` — both with Turbopack and with
 `next build --webpack`. This was isolated to the bundled native SWC compiler
