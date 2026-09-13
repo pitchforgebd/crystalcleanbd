@@ -11,7 +11,7 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset --force",
-    "postinstall": "prisma generate",
+    "postinstall": "node -e \"const cp=require('child_process');const path=require('path');const fs=require('fs');const root=process.env.INIT_CWD||process.cwd();const schema=path.join(root,'prisma','schema.prisma');const pkgJson=require.resolve('prisma/package.json',{paths:[root]});const pkg=JSON.parse(fs.readFileSync(pkgJson,'utf8'));const cli=path.join(path.dirname(pkgJson),typeof pkg.bin==='string'?pkg.bin:pkg.bin.prisma);cp.execFileSync(process.execPath,[cli,'generate','--schema',schema],{stdio:'inherit',cwd:root});\"",
     "start:cpanel": "node server.js"
   },
   "prisma": {
