@@ -93,8 +93,9 @@ script runner):
 npm ci                     # installs dependencies and runs prisma generate
 npx prisma migrate deploy  # creates/updates the tables — never use migrate dev here
 npm run db:seed            # first deploy only: base content + the owner account
-npm run build
 ```
+
+**`npm run build` may not work on this host — see [Building](#3a-building-a-cpanel-cpu-quirk) below before running it.**
 
 Then press **Restart** on the Node app in cPanel (Passenger serves `server.js`).
 
@@ -102,6 +103,46 @@ After the first successful sign-in, delete the `ADMIN_PASSWORD` line from `.env`
 and restart again — the password is already hashed in the database.
 
 ---
+
+### 3a. Building — a cPanel CPU quirk
+
+On at least one observed cPanel host (CloudLinux, Intel Xeon E-2288G), `next build`
+crashes immediately with `Bus error (core dumped)` — both with Turbopack and with
+`next build --webpack`. This was isolated to the bundled native SWC compiler
+binary (`@next/swc-linux-x64-gnu`) specifically:
+
+```bash
+node -e "require('@next/swc-linux-x64-gnu')"   # crashes with Bus error on the affected host
+node -e "require('sharp')"                      # fine
+node -e "require('@prisma/client')"             # fine
+```
+
+Sharp and Prisma's own native binaries load fine, so this is not a general
+native-module problem on that host — likely a CPU-instruction mismatch in that
+specific prebuilt binary. **Runtime is unaffected**: `next start` / `server.js`
+serve already-built output without re-invoking the compiler.
+
+**If `npm run build` crashes the same way**, build locally instead and ship the
+output:
+
+1. On your own machine (where `npm run build` works): run it, then zip
+   `.next` **excluding `.next/cache`** (the cache is large and not needed to
+   serve the app — only `.next` itself, minus `cache/`, has to make the trip).
+2. Upload the zip to the application root via cPanel File Manager.
+3. On the server:
+   ```bash
+   cd ~/crystalcleanbd   # your application root
+   rm -rf .next
+   mkdir .next
+   unzip -q next-build.zip -d .next
+   rm next-build.zip
+   ```
+4. Restart the Node app as usual.
+
+Repeat this for every update that changes application code (not needed for
+content-only changes made through the admin dashboard, which don't touch
+`.next`). Re-check whether `npm run build` itself works after any future Node
+version change on the host — the underlying binary compatibility may change.
 
 ## 4. After deploying — check these
 
@@ -125,10 +166,10 @@ and restart again — the password is already hashed in the database.
 git pull                   # or re-upload the changed files
 npm ci
 npx prisma migrate deploy  # only needed when prisma/schema.prisma changed
-npm run build
 ```
 
-Then **Restart** the Node app. Do not re-run `npm run db:seed` on an existing
+Then build (see [3a](#3a-building-a-cpanel-cpu-quirk) if `npm run build` crashes
+on this host) and **Restart** the Node app. Do not re-run `npm run db:seed` on an existing
 site: it resets seeded content such as hero slides and statistics.
 
 Keep the `UPLOAD_DIR` folder between deploys — it holds the client's photos.
