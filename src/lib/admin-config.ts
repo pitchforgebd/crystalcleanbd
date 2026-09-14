@@ -6,7 +6,7 @@ export const adminNav: AdminNavItem[] = [
   { label: "Website Settings", href: "/admin/settings" },
   { label: "Homepage", href: "/admin/homepage" },
   { label: "About Page", href: "/admin/about" },
-  { label: "Hero Slides", href: "/admin/hero-slides" },
+  { label: "Hero Section", href: "/admin/hero" },
   { label: "Services", href: "/admin/services" },
   { label: "Statistics", href: "/admin/statistics" },
   { label: "Testimonials", href: "/admin/testimonials" },

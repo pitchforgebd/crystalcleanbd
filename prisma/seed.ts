@@ -84,17 +84,25 @@ async function main() {
     });
   }
 
-  // -- Hero slides --
-  const heroSlides = [
-    { image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=2000&q=80", imageAlt: "Professional cleaning team preparing a bright interior space", heading: "Spaces that feel freshly reset", subheading: "Commercial & residential cleaning", text: "Crystal Clean Service delivers disciplined, detail-focused cleaning for offices, homes, and shared environments.", ctaLabel: "Explore services", ctaHref: "/services", order: 1 },
-    { image: "https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=2000&q=80", imageAlt: "Clean modern office corridor after professional service", heading: "Reliability you can schedule around", subheading: "Consistent teams. Clear standards.", text: "From daily maintenance to deep cleans, every visit follows a clear checklist and quality review.", ctaLabel: "Request a visit", ctaHref: "/contact", order: 2 },
-    { image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=2000&q=80", imageAlt: "Sparkling glass surface reflecting natural light", heading: "Clarity in every surface", subheading: "Premium finish cleaning", text: "Glass, floors, and high-touch zones treated with care so your space looks intentional — not just tidy.", ctaLabel: "View gallery", ctaHref: "/gallery", order: 3 },
-  ];
-  // Wipe and re-insert by order
-  await prisma.heroSlide.deleteMany({});
-  for (const s of heroSlides) {
-    await prisma.heroSlide.create({ data: { ...s, active: true } });
-  }
+  // -- Hero section (single static hero, not a slider) --
+  await prisma.heroContent.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      heading: "Spaces that feel freshly reset",
+      subheading: "Commercial & residential cleaning",
+      text: "Crystal Clean Service delivers disciplined, detail-focused cleaning for offices, homes, and shared environments.",
+      ctaLabel: "Explore services",
+      ctaHref: "/services",
+      image1: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=2000&q=80",
+      image1Alt: "Professional cleaning team preparing a bright interior space",
+      image2: "https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=2000&q=80",
+      image2Alt: "Clean modern office corridor after professional service",
+      image3: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?auto=format&fit=crop&w=2000&q=80",
+      image3Alt: "Sparkling glass surface reflecting natural light",
+    },
+  });
 
   // -- Services --
   const services = [

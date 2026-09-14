@@ -41,16 +41,20 @@ export function mapSiteSettings(s: SiteSettings): SiteInfo {
 // Hero
 // ---------------------------------------------------------------------------
 
-import type { HeroSlide } from "@/lib/types";
+import type { HeroContent } from "@/lib/types";
 
-export function mapHeroSlide(r: {
-  id: string; image: string; imageAlt: string; heading: string;
-  subheading: string; text: string; ctaLabel: string; ctaHref: string;
-  order: number; active: boolean;
-}): HeroSlide {
-  return { id: r.id, image: r.image, imageAlt: r.imageAlt, heading: r.heading,
-    subheading: r.subheading, text: r.text, ctaLabel: r.ctaLabel, ctaHref: r.ctaHref,
-    order: r.order, active: r.active };
+export function mapHeroContent(r: {
+  heading: string; subheading: string; text: string; ctaLabel: string; ctaHref: string;
+  image1: string; image1Alt: string; image2: string; image2Alt: string;
+  image3: string; image3Alt: string;
+}): HeroContent {
+  return {
+    heading: r.heading, subheading: r.subheading, text: r.text,
+    ctaLabel: r.ctaLabel, ctaHref: r.ctaHref,
+    image1: r.image1, image1Alt: r.image1Alt,
+    image2: r.image2, image2Alt: r.image2Alt,
+    image3: r.image3, image3Alt: r.image3Alt,
+  };
 }
 
 // ---------------------------------------------------------------------------

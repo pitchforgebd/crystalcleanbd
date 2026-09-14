@@ -21,7 +21,7 @@ async function referencedUrls(): Promise<Set<string>> {
     prisma.seoSettings.findMany(),
     prisma.pageSeo.findMany(),
     prisma.homepageSection.findMany(),
-    prisma.heroSlide.findMany(),
+    prisma.heroContent.findMany(),
     prisma.service.findMany(),
     prisma.serviceReview.findMany(),
     prisma.statistic.findMany(),

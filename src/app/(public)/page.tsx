@@ -16,7 +16,7 @@ import {
 } from "@/components/home/ServicesSections";
 import { StatisticsSection } from "@/components/home/StatisticsSection";
 import { getSiteInfo } from "@/lib/repository/site";
-import { listHeroSlides } from "@/lib/repository/hero";
+import { getHeroContent } from "@/lib/repository/hero";
 import { listServices } from "@/lib/repository/services";
 import { listStatistics } from "@/lib/repository/statistics";
 import { listTestimonials } from "@/lib/repository/testimonials";
@@ -29,7 +29,7 @@ import { listHomepageSections } from "@/lib/repository/homepage";
 export default async function HomePage() {
   const [
     siteInfo,
-    heroSlides,
+    hero,
     services,
     statistics,
     testimonials,
@@ -41,7 +41,7 @@ export default async function HomePage() {
     sections,
   ] = await Promise.all([
     getSiteInfo(),
-    listHeroSlides(),
+    getHeroContent(),
     listServices(),
     listStatistics(),
     listTestimonials(),
@@ -56,7 +56,7 @@ export default async function HomePage() {
   const sectionsByKey: Record<string, ReactNode> = {
     hero: (
       <HeroSpotlight
-        slides={heroSlides}
+        hero={hero}
         services={services}
         statistics={statistics}
         siteInfo={siteInfo}

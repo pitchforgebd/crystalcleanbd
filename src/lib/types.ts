@@ -3,17 +3,18 @@ export type NavLink = {
   href: string;
 };
 
-export type HeroSlide = {
-  id: string;
-  image: string;
-  imageAlt: string;
+export type HeroContent = {
   heading: string;
   subheading: string;
   text: string;
   ctaLabel: string;
   ctaHref: string;
-  order: number;
-  active: boolean;
+  image1: string;
+  image1Alt: string;
+  image2: string;
+  image2Alt: string;
+  image3: string;
+  image3Alt: string;
 };
 
 export type Service = {

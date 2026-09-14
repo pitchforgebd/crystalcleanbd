@@ -60,22 +60,23 @@ model HomepageSection {
 }
 
 // -------- Hero --------
+// A single static hero section (no slider/carousel) — one headline/CTA plus
+// three fixed photo slots for the floating image cluster.
 
-model HeroSlide {
-  id          String   @id @default(cuid())
-  image       String   @db.VarChar(1000)
-  imageAlt    String   @db.VarChar(255)
-  heading     String   @db.VarChar(255)
-  subheading  String   @db.VarChar(255)
-  text        String   @db.Text
-  ctaLabel    String   @db.VarChar(80)
-  ctaHref     String   @db.VarChar(255)
-  order       Int      @default(0)
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([active, order])
+model HeroContent {
+  id         Int      @id @default(1)
+  heading    String   @db.VarChar(255)
+  subheading String   @db.VarChar(255)
+  text       String   @db.Text
+  ctaLabel   String   @db.VarChar(80)
+  ctaHref    String   @db.VarChar(255)
+  image1     String   @db.VarChar(1000)
+  image1Alt  String   @db.VarChar(255)
+  image2     String   @db.VarChar(1000)
+  image2Alt  String   @db.VarChar(255)
+  image3     String   @db.VarChar(1000)
+  image3Alt  String   @db.VarChar(255)
+  updatedAt  DateTime @updatedAt
 }
 
 // -------- Services --------

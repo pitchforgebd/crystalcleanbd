@@ -8,11 +8,11 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { FiArrowRight, FiGrid, FiSearch, FiShield, FiStar } from "react-icons/fi";
 import { SelectMenu } from "@/components/ui/SelectMenu";
 import { ServiceIcon } from "@/components/ui/ServiceIcon";
-import type { HeroSlide, Service, SiteInfo, Statistic } from "@/lib/types";
+import type { HeroContent, Service, SiteInfo, Statistic } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  slides: HeroSlide[];
+  hero: HeroContent | null;
   services: Service[];
   statistics: Statistic[];
   siteInfo: SiteInfo;
@@ -50,13 +50,12 @@ function useCountUp(target: number, run: boolean): number {
   return run ? value : safe;
 }
 
-export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props) {
+export function HeroSpotlight({ hero, services, statistics, siteInfo }: Props) {
   const router = useRouter();
   const reduce = useReducedMotion();
 
-  const lead = slides[0];
   const [headStart, headAccent] = splitHeadline(
-    lead?.heading ?? "Professional cleaning services",
+    hero?.heading ?? "Professional cleaning services",
   );
 
   const categories = useMemo(
@@ -80,17 +79,20 @@ export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props)
     ? services.reduce((total, service) => total + service.rating, 0) / services.length
     : 0;
 
-  const gallery = (
-    slides.length >= 3
-      ? slides.slice(0, 3)
-      : [
-          ...slides,
-          ...services.map((service) => ({
-            image: service.featuredImage,
-            imageAlt: service.imageAlt,
-          })),
-        ]
-  ).slice(0, 3);
+  const heroSlots = hero
+    ? [
+        { image: hero.image1, imageAlt: hero.image1Alt },
+        { image: hero.image2, imageAlt: hero.image2Alt },
+        { image: hero.image3, imageAlt: hero.image3Alt },
+      ].filter((slot) => slot.image)
+    : [];
+  const gallery = [
+    ...heroSlots,
+    ...services.map((service) => ({
+      image: service.featuredImage,
+      imageAlt: service.imageAlt,
+    })),
+  ].slice(0, 3);
 
   function onSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -119,7 +121,7 @@ export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props)
               </span>
               {siteInfo.brandName}
               <span className="text-[var(--ink-muted)]">
-                &middot; {lead?.subheading ?? "Commercial & residential cleaning"}
+                &middot; {hero?.subheading ?? "Commercial & residential cleaning"}
               </span>
             </span>
           </motion.div>
@@ -138,7 +140,7 @@ export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props)
             className="mt-5 max-w-xl text-[1.02rem] leading-relaxed text-[var(--ink-muted)] md:text-lg"
             {...fade(0.16)}
           >
-            {lead?.text ?? siteInfo.tagline}
+            {hero?.text ?? siteInfo.tagline}
           </motion.p>
 
           {/* ---------- Quick service finder ---------- */}
@@ -246,10 +248,10 @@ export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props)
             </div>
 
             <Link
-              href={lead?.ctaHref || "/contact"}
+              href={hero?.ctaHref || "/contact"}
               className="group inline-flex items-center gap-2 text-sm font-bold text-[var(--brand)]"
             >
-              {lead?.ctaLabel || "Get a free quote"}
+              {hero?.ctaLabel || "Get a free quote"}
               <FiArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden />
             </Link>
           </motion.div>
