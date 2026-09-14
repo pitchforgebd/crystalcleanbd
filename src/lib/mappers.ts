@@ -49,7 +49,8 @@ export function mapHeroSlide(r: {
   order: number; active: boolean;
 }): HeroSlide {
   return { id: r.id, image: r.image, imageAlt: r.imageAlt, heading: r.heading,
-    subheading: r.subheading, text: r.text, ctaLabel: r.ctaLabel, ctaHref: r.ctaHref };
+    subheading: r.subheading, text: r.text, ctaLabel: r.ctaLabel, ctaHref: r.ctaHref,
+    order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------

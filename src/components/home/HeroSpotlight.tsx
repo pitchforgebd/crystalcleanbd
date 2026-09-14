@@ -246,10 +246,10 @@ export function HeroSpotlight({ slides, services, statistics, siteInfo }: Props)
             </div>
 
             <Link
-              href="/contact"
+              href={lead?.ctaHref || "/contact"}
               className="group inline-flex items-center gap-2 text-sm font-bold text-[var(--brand)]"
             >
-              Get a free quote
+              {lead?.ctaLabel || "Get a free quote"}
               <FiArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden />
             </Link>
           </motion.div>

@@ -12,6 +12,8 @@ export type HeroSlide = {
   text: string;
   ctaLabel: string;
   ctaHref: string;
+  order: number;
+  active: boolean;
 };
 
 export type Service = {

@@ -10,3 +10,9 @@ export async function listHeroSlides(): Promise<HeroSlide[]> {
   });
   return rows.map(mapHeroSlide);
 }
+
+/** Admin listing — includes inactive slides so they can be reviewed and re-activated. */
+export async function listAllHeroSlides(): Promise<HeroSlide[]> {
+  const rows = await prisma.heroSlide.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapHeroSlide);
+}
