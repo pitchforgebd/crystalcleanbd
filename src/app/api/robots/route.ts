@@ -1,10 +1,13 @@
-// Minimal robots.txt placeholder. Phase 6 may add a disallow list for /admin.
+import { getSeoSettings } from "@/lib/repository/seo";
+import { getSiteBaseUrl } from "@/lib/site-url";
 
 export async function GET() {
+  const [seo, base] = await Promise.all([getSeoSettings(), getSiteBaseUrl()]);
+  const allowIndexing = seo?.robotsIndex ?? true;
   const body = `User-agent: *
-Allow: /
+${allowIndexing ? "Allow: /" : "Disallow: /"}
 Disallow: /admin
-Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com"}/api/sitemap
+Sitemap: ${base}/api/sitemap
 `;
   return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8" } });
 }

@@ -6,12 +6,15 @@ import { PageHero } from "@/components/ui/PageHero";
 import { ServiceCatalog } from "@/components/services/ServiceCatalog";
 import { listServices } from "@/lib/repository/services";
 import { getSiteInfo } from "@/lib/repository/site";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteInfo = await getSiteInfo();
+  const [siteInfo, pageSeo] = await Promise.all([getSiteInfo(), getPageSeoByPath("/services")]);
   return {
-    title: "Services",
-    description: `Explore cleaning services offered by ${siteInfo.brandName}.`,
+    title: pageSeo?.title || "Services",
+    description: pageSeo?.description || `Explore cleaning services offered by ${siteInfo.brandName}.`,
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
   };
 }
 
@@ -24,7 +27,7 @@ export default async function ServicesPage() {
       <PageHero
         eyebrow="Services"
         title="Cleaning services for workplaces and homes"
-        description="Browse the full catalog. Each package opens with scope, availability, and demo reviews."
+        description="Browse the full catalog. Each package opens with scope, availability, and customer reviews."
         image={services[0]?.featuredImage}
         imageAlt={services[0]?.imageAlt}
         actions={

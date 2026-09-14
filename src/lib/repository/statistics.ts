@@ -10,3 +10,9 @@ export async function listStatistics(): Promise<Statistic[]> {
   });
   return rows.map(mapStatistic);
 }
+
+/** Admin listing — includes inactive statistics so they can be reviewed and re-activated. */
+export async function listAllStatistics(): Promise<Statistic[]> {
+  const rows = await prisma.statistic.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapStatistic);
+}

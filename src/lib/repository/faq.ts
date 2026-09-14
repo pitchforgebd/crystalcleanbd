@@ -10,3 +10,9 @@ export async function listFaqs(): Promise<FaqItem[]> {
   });
   return rows.map(mapFaqItem);
 }
+
+/** Admin listing — includes inactive FAQ items so they can be reviewed and re-activated. */
+export async function listAllFaqs(): Promise<FaqItem[]> {
+  const rows = await prisma.faqItem.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapFaqItem);
+}

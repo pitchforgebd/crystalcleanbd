@@ -11,6 +11,12 @@ export async function listSocialLinks(): Promise<SocialLink[]> {
   return rows.map(mapSocialLink);
 }
 
+/** Admin listing — includes inactive social links so they can be reviewed and re-activated. */
+export async function listAllSocialLinks(): Promise<SocialLink[]> {
+  const rows = await prisma.socialLink.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapSocialLink);
+}
+
 export async function getWhatsAppLink(): Promise<SocialLink | null> {
   const row = await prisma.socialLink.findFirst({
     where: { active: true, platform: "whatsapp" },

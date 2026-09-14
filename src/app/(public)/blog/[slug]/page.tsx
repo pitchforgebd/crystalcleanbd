@@ -24,13 +24,17 @@ export async function generateMetadata({ params }: BlogDetailProps): Promise<Met
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   if (!post) return { title: "Blog post" };
+  const title = post.seoTitle || post.title;
+  const description = post.metaDescription || post.excerpt;
+  const image = post.ogImage || post.featuredImage;
   return {
-    title: post.title,
-    description: post.excerpt,
+    title,
+    description,
+    alternates: post.canonical ? { canonical: post.canonical } : undefined,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: [{ url: post.featuredImage }],
+      title,
+      description,
+      images: [{ url: image }],
     },
   };
 }

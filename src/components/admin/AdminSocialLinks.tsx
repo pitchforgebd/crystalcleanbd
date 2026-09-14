@@ -6,7 +6,7 @@ import {
   FeedbackBanner,
   useAdminCrud,
 } from "@/components/admin/AdminActions";
-import { AdminCard, Field, inputClass } from "@/components/admin/AdminUi";
+import { AdminCard, Field, StatusBadge, inputClass } from "@/components/admin/AdminUi";
 import { SocialIcon } from "@/components/ui/SocialIcon";
 import type { SocialLink } from "@/lib/types";
 import {
@@ -27,13 +27,14 @@ const PLATFORMS: { value: Platform; label: string; placeholder: string }[] = [
   { value: "whatsapp", label: "WhatsApp", placeholder: "https://wa.me/8801700000000" },
 ];
 
-type Draft = { platform: Platform; label: string; href: string; order: number };
+type Draft = { platform: Platform; label: string; href: string; order: number; active: boolean };
 
 const emptyDraft: Draft = {
   platform: "facebook",
   label: "Facebook",
   href: "",
   order: 0,
+  active: true,
 };
 
 /**
@@ -50,14 +51,10 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
       update: updateSocialLink,
       remove: deleteSocialLink,
       noun: "Social link",
-      toRow: (values, id) => ({
-        id,
-        platform: values.platform,
-        label: values.label,
-        href: values.href,
-      }),
-      onSaved: () => setDraft(emptyDraft),
+      toRow: (values, id) => ({ id, ...values }),
+      onSaved: () => setDraft({ ...emptyDraft, order: sorted.length }),
     });
+  const sorted = [...rows].sort((a, b) => a.order - b.order);
 
   const placeholder =
     PLATFORMS.find((item) => item.value === draft.platform)?.placeholder ?? "";
@@ -65,7 +62,7 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
   function onSubmit(event: FormEvent) {
     event.preventDefault();
     if (!draft.label.trim() || !draft.href.trim()) return;
-    save({ ...draft, order: draft.order || rows.length + 1 });
+    save(draft);
   }
 
   return (
@@ -80,13 +77,13 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
 
       <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          {rows.length === 0 ? (
+          {sorted.length === 0 ? (
             <p className="rounded-xl border border-dashed border-[var(--line)] px-4 py-6 text-center text-sm text-[var(--ink-muted)]">
               No social links yet — add the first one on the right.
             </p>
           ) : (
             <ul className="space-y-2">
-              {rows.map((link) => (
+              {sorted.map((link) => (
                 <li
                   key={link.id}
                   className={cn(
@@ -110,6 +107,7 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
                       {link.href}
                     </a>
                   </span>
+                  <StatusBadge active={link.active} />
                   <span className="flex items-center gap-3">
                     <button
                       type="button"
@@ -121,7 +119,8 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
                           platform: link.platform,
                           label: link.label,
                           href: link.href,
-                          order: rows.findIndex((row) => row.id === link.id) + 1,
+                          order: link.order,
+                          active: link.active,
                         });
                       }}
                     >
@@ -187,6 +186,28 @@ export function AdminSocialLinks({ initial }: { initial: SocialLink[] }) {
               }
             />
           </Field>
+
+          <Field label="Order">
+            <input
+              type="number"
+              className={inputClass}
+              value={draft.order}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, order: Number(event.target.value) || 0 }))
+              }
+            />
+          </Field>
+
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={draft.active}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, active: event.target.checked }))
+              }
+            />
+            Active (shown in the top bar / footer)
+          </label>
 
           <div className="flex items-center gap-3">
             <button

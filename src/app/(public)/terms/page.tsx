@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { PageHero } from "@/components/ui/PageHero";
 import { getLegalPage } from "@/lib/repository/legal";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description: "Sample terms page for Crystal Clean Service Phase 1.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath("/terms");
+  return {
+    title: pageSeo?.title || "Terms & Conditions",
+    description: pageSeo?.description || "Terms and conditions for using Crystal Clean Service.",
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
+  };
+}
 
 export default async function TermsPage() {
   const page = await getLegalPage("terms");
@@ -17,7 +23,7 @@ export default async function TermsPage() {
       <PageHero
         eyebrow="Legal"
         title={page.title}
-        description={`Last updated ${page.updated}. Sample content for layout only.`}
+        description={`Last updated ${page.updated}.`}
       />
       <section className="section-space">
         <Container className="max-w-3xl">

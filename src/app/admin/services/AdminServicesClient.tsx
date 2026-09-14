@@ -40,6 +40,7 @@ const emptyDraft: ServiceDraft = {
   featured: false,
   popular: false,
   order: 1,
+  active: true,
 };
 
 type Props = { initial: Service[] };
@@ -134,6 +135,7 @@ export function AdminServicesClient({ initial }: Props) {
       featured: service.featured,
       popular: service.popular,
       order: service.order,
+      active: service.active,
     });
     setFeaturesText(service.features.join("\n"));
   }
@@ -147,7 +149,7 @@ export function AdminServicesClient({ initial }: Props) {
         description="Create and manage service catalog entries, ordering, and flags."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Name", "Slug", "Order", "Flags", "Actions"]}>
+        <AdminTable headers={["Name", "Slug", "Order", "Flags", "Status", "Actions"]}>
           {rows.map((service) => (
             <tr key={service.id} className="border-b border-[var(--line)] last:border-0">
               <td className="px-4 py-3 font-medium">{service.name}</td>
@@ -161,6 +163,9 @@ export function AdminServicesClient({ initial }: Props) {
                     <span className="text-xs text-[var(--ink-muted)]">—</span>
                   ) : null}
                 </div>
+              </td>
+              <td className="px-4 py-3">
+                <StatusBadge active={service.active} />
               </td>
               <td className="px-4 py-3">
                 <div className="flex flex-wrap gap-3">
@@ -276,6 +281,16 @@ export function AdminServicesClient({ initial }: Props) {
                   }
                 />
                 Popular
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={draft.active}
+                  onChange={(event) =>
+                    setDraft((c) => ({ ...c, active: event.target.checked }))
+                  }
+                />
+                Active (shown on the site)
               </label>
             </div>
             <div className="flex gap-3">

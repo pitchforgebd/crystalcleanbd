@@ -4,11 +4,18 @@ import { Container } from "@/components/ui/Container";
 import { InnerCta } from "@/components/ui/InnerCta";
 import { PageHero } from "@/components/ui/PageHero";
 import { listFaqs } from "@/lib/repository/faq";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
-export const metadata: Metadata = {
-  title: "FAQ",
-  description: "Frequently asked questions about Crystal Clean Service.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath("/faq");
+  return {
+    title: pageSeo?.title || "FAQ",
+    description:
+      pageSeo?.description || "Frequently asked questions about Crystal Clean Service.",
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
+  };
+}
 
 export default async function FaqPage() {
   const items = await listFaqs();
@@ -19,7 +26,7 @@ export default async function FaqPage() {
       <PageHero
         eyebrow="FAQ"
         title="Answers to common questions"
-        description="Clear demo answers about coverage, scheduling, supplies, and how to request a quote."
+        description="Clear answers about coverage, scheduling, supplies, and how to request a quote."
         actions={
           <Link href="/contact" className="btn btn-ghost">
             Still need help?

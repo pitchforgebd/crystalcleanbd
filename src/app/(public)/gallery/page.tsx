@@ -5,11 +5,17 @@ import { Container } from "@/components/ui/Container";
 import { InnerCta } from "@/components/ui/InnerCta";
 import { PageHero } from "@/components/ui/PageHero";
 import { listGalleryImages, listGalleryVideos } from "@/lib/repository/gallery";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Image and video gallery for Crystal Clean Service.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath("/gallery");
+  return {
+    title: pageSeo?.title || "Gallery",
+    description: pageSeo?.description || "Image and video gallery for Crystal Clean Service.",
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
+  };
+}
 
 export default async function GalleryPage() {
   const [images, videos] = await Promise.all([
@@ -22,7 +28,7 @@ export default async function GalleryPage() {
       <PageHero
         eyebrow="Gallery"
         title="Images and videos from finished work"
-        description="Demo media for layout testing. Replace with approved Crystal Clean Service photography and footage later."
+        description="Photos and footage from completed jobs across offices, homes, and shared spaces."
         image={images[0]?.src}
         imageAlt={images[0]?.alt}
         actions={<ButtonLink href="/contact" variant="ghost">Request a similar finish</ButtonLink>}
@@ -38,7 +44,7 @@ export default async function GalleryPage() {
               </h2>
             </div>
             <p className="max-w-md text-sm text-[var(--ink-muted)]">
-              {images.length} demo images showing offices, homes, glass, and hygiene zones.
+              {images.length} images showing offices, homes, glass, and hygiene zones.
             </p>
           </div>
 

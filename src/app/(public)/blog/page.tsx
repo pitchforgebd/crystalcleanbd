@@ -6,12 +6,18 @@ import { Container } from "@/components/ui/Container";
 import { InnerCta } from "@/components/ui/InnerCta";
 import { PageHero } from "@/components/ui/PageHero";
 import { listBlogCategories, listBlogPosts } from "@/lib/repository/blog";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 import { formatDate } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Articles and notes from Crystal Clean Service.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const pageSeo = await getPageSeoByPath("/blog");
+  return {
+    title: pageSeo?.title || "Blog",
+    description: pageSeo?.description || "Articles and notes from Crystal Clean Service.",
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
+  };
+}
 
 export default async function BlogPage() {
   const [categories, posts] = await Promise.all([
@@ -27,7 +33,7 @@ export default async function BlogPage() {
       <PageHero
         eyebrow="Blog"
         title="Practical notes on cleaner spaces"
-        description="Demo articles on workplace care, deep cleaning, and professional standards."
+        description="Articles on workplace care, deep cleaning, and professional standards."
         image={featured?.featuredImage}
         imageAlt={featured?.imageAlt}
         actions={<ButtonLink href="/contact" variant="ghost">Talk to our team</ButtonLink>}

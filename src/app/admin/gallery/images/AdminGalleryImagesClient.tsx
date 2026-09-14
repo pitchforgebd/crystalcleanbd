@@ -11,6 +11,7 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
   textareaClass,
 } from "@/components/admin/AdminUi";
@@ -28,8 +29,9 @@ type ImageDraft = {
   description: string;
   src: string;
   order: number;
+  active: boolean;
 };
-const emptyDraft: ImageDraft = { title: "", alt: "", description: "", src: "", order: 1 };
+const emptyDraft: ImageDraft = { title: "", alt: "", description: "", src: "", order: 1, active: true };
 
 type Props = { initial: GalleryImage[] };
 
@@ -60,7 +62,7 @@ export function AdminGalleryImagesClient({ initial }: Props) {
         description="Manage image gallery titles, alt text, order, and source URLs."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Order", "Title", "Alt", "Actions"]}>
+        <AdminTable headers={["Order", "Title", "Alt", "Status", "Actions"]}>
           {rows
             .slice()
             .sort((a, b) => a.order - b.order)
@@ -69,6 +71,9 @@ export function AdminGalleryImagesClient({ initial }: Props) {
                 <td className="px-4 py-3">{image.order}</td>
                 <td className="px-4 py-3 font-medium">{image.title}</td>
                 <td className="px-4 py-3 text-[var(--ink-muted)]">{image.alt}</td>
+                <td className="px-4 py-3">
+                  <StatusBadge active={image.active} />
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-3">
                     <button
@@ -82,6 +87,7 @@ export function AdminGalleryImagesClient({ initial }: Props) {
                           description: image.description,
                           src: image.src,
                           order: image.order,
+                          active: image.active,
                         });
                       }}
                     >
@@ -139,6 +145,14 @@ export function AdminGalleryImagesClient({ initial }: Props) {
                 }
               />
             </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown in the public gallery)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"

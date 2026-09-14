@@ -37,6 +37,8 @@ export type PageSeoRow = {
   path: string;
   title: string;
   description: string;
+  ogImage: string | null;
+  canonical: string | null;
 };
 
 export type AdminAccount = {

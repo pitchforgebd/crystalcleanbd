@@ -31,8 +31,14 @@ export async function listBlogPosts(opts?: {
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-  const row = await prisma.blogPost.findUnique({ where: { slug } });
+  const row = await prisma.blogPost.findFirst({ where: { slug, published: true } });
   return row ? mapBlogPost(row) : null;
+}
+
+/** Admin listing — includes unpublished (draft) posts so they can be reviewed and published. */
+export async function listAllBlogPosts(): Promise<BlogPost[]> {
+  const rows = await prisma.blogPost.findMany({ orderBy: { publishedAt: "desc" } });
+  return rows.map(mapBlogPost);
 }
 
 export async function listPostsByCategory(categorySlug: string): Promise<BlogPost[]> {

@@ -8,12 +8,16 @@ import { PageHero } from "@/components/ui/PageHero";
 import { getAboutContent } from "@/lib/repository/about";
 import { getConcernContent } from "@/lib/repository/concern";
 import { getSiteInfo } from "@/lib/repository/site";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteInfo = await getSiteInfo();
+  const [siteInfo, pageSeo] = await Promise.all([getSiteInfo(), getPageSeoByPath("/about")]);
   return {
-    title: "About Us",
-    description: `Learn about ${siteInfo.brandName}, our mission, vision, and approach.`,
+    title: pageSeo?.title || "About Us",
+    description:
+      pageSeo?.description || `Learn about ${siteInfo.brandName}, our mission, vision, and approach.`,
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
   };
 }
 

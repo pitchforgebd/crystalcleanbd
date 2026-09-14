@@ -65,7 +65,7 @@ export function mapService(r: {
   shortDescription: string; fullDescription: string;
   workScope: unknown; outcomes: unknown; features: unknown; packageTags: unknown;
   availability: string; rating: number; reviewCount: number;
-  featured: boolean; popular: boolean; order: number;
+  featured: boolean; popular: boolean; order: number; active: boolean;
 }): Service {
   return {
     id: r.id, name: r.name, slug: r.slug, category: r.category,
@@ -77,7 +77,7 @@ export function mapService(r: {
     features: parseJson<string>(r.features),
     packageTags: parseJson<string>(r.packageTags),
     availability: r.availability, rating: r.rating, reviewCount: r.reviewCount,
-    featured: r.featured, popular: r.popular, order: r.order,
+    featured: r.featured, popular: r.popular, order: r.order, active: r.active,
   };
 }
 
@@ -107,9 +107,10 @@ export function mapServiceReview(r: {
 import type { Statistic } from "@/lib/types";
 
 export function mapStatistic(r: {
-  id: string; label: string; value: number; suffix: string; order: number;
+  id: string; label: string; value: number; suffix: string; order: number; active: boolean;
 }): Statistic {
-  return { id: r.id, label: r.label, value: r.value, suffix: r.suffix };
+  return { id: r.id, label: r.label, value: r.value, suffix: r.suffix,
+    order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------
@@ -120,10 +121,10 @@ import type { Testimonial } from "@/lib/types";
 
 export function mapTestimonial(r: {
   id: string; name: string; role: string; quote: string;
-  avatarSrc: string; avatarAlt: string; order: number;
+  avatarSrc: string; avatarAlt: string; order: number; active: boolean;
 }): Testimonial {
   return { id: r.id, name: r.name, role: r.role, quote: r.quote,
-    avatarSrc: r.avatarSrc, avatarAlt: r.avatarAlt };
+    avatarSrc: r.avatarSrc, avatarAlt: r.avatarAlt, order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------
@@ -133,9 +134,10 @@ export function mapTestimonial(r: {
 import type { ClientLogo } from "@/lib/types";
 
 export function mapClient(r: {
-  id: string; name: string; logoSrc: string; logoAlt: string;
+  id: string; name: string; logoSrc: string; logoAlt: string; order: number; active: boolean;
 }): ClientLogo {
-  return { id: r.id, name: r.name, logoSrc: r.logoSrc, logoAlt: r.logoAlt };
+  return { id: r.id, name: r.name, logoSrc: r.logoSrc, logoAlt: r.logoAlt,
+    order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------
@@ -146,18 +148,18 @@ import type { GalleryImage, GalleryVideo } from "@/lib/types";
 
 export function mapGalleryImage(r: {
   id: string; title: string; alt: string; description: string;
-  src: string; order: number;
+  src: string; order: number; active: boolean;
 }): GalleryImage {
   return { id: r.id, title: r.title, alt: r.alt, description: r.description,
-    src: r.src, order: r.order };
+    src: r.src, order: r.order, active: r.active };
 }
 
 export function mapGalleryVideo(r: {
   id: string; title: string; description: string;
-  youtubeId: string; order: number;
+  youtubeId: string; order: number; active: boolean;
 }): GalleryVideo {
   return { id: r.id, title: r.title, description: r.description,
-    youtubeId: r.youtubeId, order: r.order };
+    youtubeId: r.youtubeId, order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------
@@ -191,6 +193,8 @@ export function mapBlogPost(r: {
       : String(r.publishedAt),
     categorySlug: r.categorySlug, featured: r.featured,
     tags: parseJson<string>(r.tags),
+    published: r.published, seoTitle: r.seoTitle, metaDescription: r.metaDescription,
+    ogImage: r.ogImage, canonical: r.canonical,
   };
 }
 
@@ -201,9 +205,9 @@ export function mapBlogPost(r: {
 import type { FaqItem } from "@/lib/types";
 
 export function mapFaqItem(r: {
-  id: string; question: string; answer: string; order: number;
+  id: string; question: string; answer: string; order: number; active: boolean;
 }): FaqItem {
-  return { id: r.id, question: r.question, answer: r.answer, order: r.order };
+  return { id: r.id, question: r.question, answer: r.answer, order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------
@@ -213,11 +217,11 @@ export function mapFaqItem(r: {
 import type { SocialLink } from "@/lib/types";
 
 export function mapSocialLink(r: {
-  id: string; platform: string; label: string; href: string;
+  id: string; platform: string; label: string; href: string; order: number; active: boolean;
 }): SocialLink {
   return { id: r.id,
     platform: r.platform as SocialLink["platform"],
-    label: r.label, href: r.href };
+    label: r.label, href: r.href, order: r.order, active: r.active };
 }
 
 // ---------------------------------------------------------------------------

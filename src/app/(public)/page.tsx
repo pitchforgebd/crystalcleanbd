@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from "react";
 import {
   ClientLogos,
   ConcernPreview,
@@ -23,6 +24,7 @@ import { listGalleryImages, listGalleryVideos } from "@/lib/repository/gallery";
 import { getConcernContent } from "@/lib/repository/concern";
 import { listBlogPosts } from "@/lib/repository/blog";
 import { listClients } from "@/lib/repository/clients";
+import { listHomepageSections } from "@/lib/repository/homepage";
 
 export default async function HomePage() {
   const [
@@ -36,6 +38,7 @@ export default async function HomePage() {
     concernContent,
     blogPosts,
     clients,
+    sections,
   ] = await Promise.all([
     getSiteInfo(),
     listHeroSlides(),
@@ -47,27 +50,40 @@ export default async function HomePage() {
     getConcernContent(),
     listBlogPosts({ featured: true }),
     listClients(),
+    listHomepageSections(),
   ]);
 
-  return (
-    <>
+  const sectionsByKey: Record<string, ReactNode> = {
+    hero: (
       <HeroSpotlight
         slides={heroSlides}
         services={services}
         statistics={statistics}
         siteInfo={siteInfo}
       />
-      <ServicesOverview services={services} siteInfo={siteInfo} />
-      <FeaturedServices services={services} siteInfo={siteInfo} />
-      <StatisticsSection statistics={statistics} />
-      <PopularServices services={services} />
-      <JoinCta />
-      <TestimonialsSection items={testimonials} />
-      <GalleryPreview images={galleryImages} />
-      <VideoShowcase videos={galleryVideos} />
-      <ConcernPreview content={concernContent} />
-      <LatestBlogs posts={blogPosts} />
-      <ClientLogos clients={clients} brandName={siteInfo.brandName} />
+    ),
+    services: <ServicesOverview services={services} siteInfo={siteInfo} />,
+    featured: <FeaturedServices services={services} siteInfo={siteInfo} />,
+    stats: <StatisticsSection statistics={statistics} />,
+    popular: <PopularServices services={services} />,
+    join: <JoinCta />,
+    testimonials: <TestimonialsSection items={testimonials} />,
+    gallery: <GalleryPreview images={galleryImages} />,
+    video: <VideoShowcase videos={galleryVideos} />,
+    concern: <ConcernPreview content={concernContent} />,
+    blog: <LatestBlogs posts={blogPosts} />,
+    clients: <ClientLogos clients={clients} brandName={siteInfo.brandName} />,
+  };
+
+  const ordered = [...sections]
+    .filter((section) => section.enabled)
+    .sort((a, b) => a.order - b.order);
+
+  return (
+    <>
+      {ordered.map((section) => (
+        <Fragment key={section.key}>{sectionsByKey[section.key]}</Fragment>
+      ))}
     </>
   );
 }

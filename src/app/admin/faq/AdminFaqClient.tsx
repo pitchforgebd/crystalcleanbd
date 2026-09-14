@@ -11,14 +11,15 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
   textareaClass,
 } from "@/components/admin/AdminUi";
 import type { FaqItem } from "@/lib/types";
 import { createFaq, deleteFaq, updateFaq } from "@/server/actions/faq";
 
-type FaqDraft = { question: string; answer: string; order: number };
-const emptyDraft: FaqDraft = { question: "", answer: "", order: 1 };
+type FaqDraft = { question: string; answer: string; order: number; active: boolean };
+const emptyDraft: FaqDraft = { question: "", answer: "", order: 1, active: true };
 
 type Props = { initial: FaqItem[] };
 
@@ -49,7 +50,7 @@ export function AdminFaqClient({ initial }: Props) {
         description="Manage frequently asked questions with display ordering."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Order", "Question", "Actions"]}>
+        <AdminTable headers={["Order", "Question", "Status", "Actions"]}>
           {rows
             .slice()
             .sort((a, b) => a.order - b.order)
@@ -57,6 +58,9 @@ export function AdminFaqClient({ initial }: Props) {
               <tr key={item.id} className="border-b border-[var(--line)] last:border-0">
                 <td className="px-4 py-3">{item.order}</td>
                 <td className="px-4 py-3 font-medium">{item.question}</td>
+                <td className="px-4 py-3">
+                  <StatusBadge active={item.active} />
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-3">
                     <button
@@ -68,6 +72,7 @@ export function AdminFaqClient({ initial }: Props) {
                           question: item.question,
                           answer: item.answer,
                           order: item.order,
+                          active: item.active,
                         });
                       }}
                     >
@@ -113,6 +118,14 @@ export function AdminFaqClient({ initial }: Props) {
                 }
               />
             </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown on the FAQ page)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"

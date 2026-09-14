@@ -10,3 +10,9 @@ export async function listTestimonials(): Promise<Testimonial[]> {
   });
   return rows.map(mapTestimonial);
 }
+
+/** Admin listing — includes inactive testimonials so they can be reviewed and re-activated. */
+export async function listAllTestimonials(): Promise<Testimonial[]> {
+  const rows = await prisma.testimonial.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapTestimonial);
+}

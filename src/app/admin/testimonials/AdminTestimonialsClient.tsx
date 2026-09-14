@@ -11,6 +11,7 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
   textareaClass,
 } from "@/components/admin/AdminUi";
@@ -28,6 +29,8 @@ type TestimonialDraft = {
   quote: string;
   avatarSrc: string;
   avatarAlt: string;
+  order: number;
+  active: boolean;
 };
 
 const emptyDraft: TestimonialDraft = {
@@ -36,6 +39,8 @@ const emptyDraft: TestimonialDraft = {
   quote: "",
   avatarSrc: "",
   avatarAlt: "",
+  order: 0,
+  active: true,
 };
 
 type Props = { initial: Testimonial[] };
@@ -51,8 +56,9 @@ export function AdminTestimonialsClient({ initial }: Props) {
       remove: deleteTestimonial,
       noun: "Testimonial",
       toRow: (values, id) => ({ id, ...values }),
-      onSaved: () => setDraft(emptyDraft),
+      onSaved: () => setDraft({ ...emptyDraft, order: sorted.length }),
     });
+  const sorted = [...rows].sort((a, b) => a.order - b.order);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -70,12 +76,16 @@ export function AdminTestimonialsClient({ initial }: Props) {
         description="Manage customer quotes displayed on the homepage."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Name", "Role", "Quote", "Actions"]}>
-          {rows.map((item) => (
+        <AdminTable headers={["Order", "Name", "Role", "Quote", "Status", "Actions"]}>
+          {sorted.map((item) => (
             <tr key={item.id} className="border-b border-[var(--line)] last:border-0">
+              <td className="px-4 py-3 tabular-nums">{item.order}</td>
               <td className="px-4 py-3 font-medium">{item.name}</td>
               <td className="px-4 py-3">{item.role}</td>
               <td className="max-w-sm px-4 py-3 text-[var(--ink-muted)]">{item.quote}</td>
+              <td className="px-4 py-3">
+                <StatusBadge active={item.active} />
+              </td>
               <td className="px-4 py-3">
                 <div className="flex gap-3">
                   <button
@@ -89,6 +99,8 @@ export function AdminTestimonialsClient({ initial }: Props) {
                         quote: item.quote,
                         avatarSrc: item.avatarSrc,
                         avatarAlt: item.avatarAlt,
+                        order: item.order,
+                        active: item.active,
                       });
                     }}
                   >
@@ -142,6 +154,24 @@ export function AdminTestimonialsClient({ initial }: Props) {
                 onChange={(event) => setDraft((c) => ({ ...c, avatarAlt: event.target.value }))}
               />
             </Field>
+            <Field label="Order">
+              <input
+                type="number"
+                className={inputClass}
+                value={draft.order}
+                onChange={(event) =>
+                  setDraft((c) => ({ ...c, order: Number(event.target.value) || 0 }))
+                }
+              />
+            </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown on the homepage)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"

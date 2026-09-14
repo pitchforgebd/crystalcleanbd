@@ -11,6 +11,7 @@ import {
   textareaClass,
 } from "@/components/admin/AdminUi";
 import type { SeoSettings, PageSeoRow } from "@/lib/admin-types";
+import { ImageField } from "@/components/admin/ImageField";
 import { updatePageSeo, updateSeoSettings } from "@/server/actions/seo";
 
 type Props = {
@@ -42,6 +43,8 @@ export function AdminSeoClient({ initial }: Props) {
           path: payload.page.path,
           title: payload.page.title,
           description: payload.page.description,
+          ogImage: payload.page.ogImage ?? undefined,
+          canonical: payload.page.canonical ?? undefined,
         });
       }
       return globalResult;
@@ -151,6 +154,33 @@ export function AdminSeoClient({ initial }: Props) {
                       current.map((page) =>
                         page.id === selected.id
                           ? { ...page, description: event.target.value }
+                          : page,
+                      ),
+                    )
+                  }
+                />
+              </Field>
+              <ImageField
+                label="Social share image"
+                hint="Overrides the page's default image when shared on social media."
+                value={selected.ogImage ?? ""}
+                onChange={(url) =>
+                  setPages((current) =>
+                    current.map((page) =>
+                      page.id === selected.id ? { ...page, ogImage: url || null } : page,
+                    ),
+                  )
+                }
+              />
+              <Field label="Canonical URL" hint="Only needed if this content is published elsewhere too.">
+                <input
+                  className={inputClass}
+                  value={selected.canonical ?? ""}
+                  onChange={(event) =>
+                    setPages((current) =>
+                      current.map((page) =>
+                        page.id === selected.id
+                          ? { ...page, canonical: event.target.value || null }
                           : page,
                       ),
                     )

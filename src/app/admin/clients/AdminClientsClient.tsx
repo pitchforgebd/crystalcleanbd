@@ -11,14 +11,15 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
 } from "@/components/admin/AdminUi";
 import type { ClientLogo } from "@/lib/types";
 import { ImageField } from "@/components/admin/ImageField";
 import { createClient, deleteClient, updateClient } from "@/server/actions/clients";
 
-type ClientDraft = { name: string; logoSrc: string; logoAlt: string };
-const emptyDraft: ClientDraft = { name: "", logoSrc: "", logoAlt: "" };
+type ClientDraft = { name: string; logoSrc: string; logoAlt: string; order: number; active: boolean };
+const emptyDraft: ClientDraft = { name: "", logoSrc: "", logoAlt: "", order: 0, active: true };
 
 type Props = { initial: ClientLogo[] };
 
@@ -33,8 +34,9 @@ export function AdminClientsClient({ initial }: Props) {
       remove: deleteClient,
       noun: "Client",
       toRow: (values, id) => ({ id, ...values }),
-      onSaved: () => setDraft(emptyDraft),
+      onSaved: () => setDraft({ ...emptyDraft, order: sorted.length }),
     });
+  const sorted = [...rows].sort((a, b) => a.order - b.order);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -49,11 +51,15 @@ export function AdminClientsClient({ initial }: Props) {
         description="Manage client logos shown in the homepage scrolling strip."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Client", "Logo path", "Actions"]}>
-          {rows.map((client) => (
+        <AdminTable headers={["Order", "Client", "Logo path", "Status", "Actions"]}>
+          {sorted.map((client) => (
             <tr key={client.id} className="border-b border-[var(--line)] last:border-0">
+              <td className="px-4 py-3 tabular-nums">{client.order}</td>
               <td className="px-4 py-3 font-medium">{client.name}</td>
               <td className="px-4 py-3 text-[var(--ink-muted)]">{client.logoSrc}</td>
+              <td className="px-4 py-3">
+                <StatusBadge active={client.active} />
+              </td>
               <td className="px-4 py-3">
                 <div className="flex gap-3">
                   <button
@@ -65,6 +71,8 @@ export function AdminClientsClient({ initial }: Props) {
                         name: client.name,
                         logoSrc: client.logoSrc,
                         logoAlt: client.logoAlt,
+                        order: client.order,
+                        active: client.active,
                       });
                     }}
                   >
@@ -106,6 +114,24 @@ export function AdminClientsClient({ initial }: Props) {
                 }
               />
             </Field>
+            <Field label="Order">
+              <input
+                type="number"
+                className={inputClass}
+                value={draft.order}
+                onChange={(event) =>
+                  setDraft((c) => ({ ...c, order: Number(event.target.value) || 0 }))
+                }
+              />
+            </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown on the homepage)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"

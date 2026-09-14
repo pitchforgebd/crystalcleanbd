@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Sora } from "next/font/google";
 import { getSiteInfo } from "@/lib/repository/site";
+import { getSeoSettings } from "@/lib/repository/seo";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -16,7 +17,7 @@ const sora = Sora({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteInfo = await getSiteInfo();
+  const [siteInfo, seo] = await Promise.all([getSiteInfo(), getSeoSettings()]);
   return {
     title: {
       default: `${siteInfo.brandName} | Professional Cleaning`,
@@ -27,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
       icon: [{ url: siteInfo.favicon || "/favicon.jpg" }],
       apple: [{ url: siteInfo.mainLogo || "/brand/crystal-clean-logo.jpg" }],
     },
+    robots: seo?.robotsIndex === false ? { index: false, follow: false } : undefined,
+    twitter: seo?.twitterHandle ? { card: "summary_large_image", site: seo.twitterHandle } : undefined,
   };
 }
 

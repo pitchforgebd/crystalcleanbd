@@ -10,3 +10,9 @@ export async function listClients(): Promise<ClientLogo[]> {
   });
   return rows.map(mapClient);
 }
+
+/** Admin listing — includes inactive clients so they can be reviewed and re-activated. */
+export async function listAllClients(): Promise<ClientLogo[]> {
+  const rows = await prisma.client.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapClient);
+}

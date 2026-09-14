@@ -18,3 +18,14 @@ export async function listGalleryVideos(): Promise<GalleryVideo[]> {
   });
   return rows.map(mapGalleryVideo);
 }
+
+/** Admin listings — include inactive rows so they can be reviewed and re-activated. */
+export async function listAllGalleryImages(): Promise<GalleryImage[]> {
+  const rows = await prisma.galleryImage.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapGalleryImage);
+}
+
+export async function listAllGalleryVideos(): Promise<GalleryVideo[]> {
+  const rows = await prisma.galleryVideo.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapGalleryVideo);
+}

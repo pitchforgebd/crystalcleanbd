@@ -37,5 +37,16 @@ export async function listPageSeo(): Promise<PageSeoRow[]> {
   return rows.map((r) => ({
     id: r.id, page: r.page, path: r.path,
     title: r.title, description: r.description,
+    ogImage: r.ogImage, canonical: r.canonical,
   }));
+}
+
+export async function getPageSeoByPath(path: string): Promise<PageSeoRow | null> {
+  const row = await prisma.pageSeo.findUnique({ where: { path } });
+  if (!row) return null;
+  return {
+    id: row.id, page: row.page, path: row.path,
+    title: row.title, description: row.description,
+    ogImage: row.ogImage, canonical: row.canonical,
+  };
 }

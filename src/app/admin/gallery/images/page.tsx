@@ -1,7 +1,7 @@
-import { listGalleryImages } from "@/lib/repository/gallery";
+import { listAllGalleryImages } from "@/lib/repository/gallery";
 import { AdminGalleryImagesClient } from "@/app/admin/gallery/images/AdminGalleryImagesClient";
 
 export default async function AdminGalleryImagesPage() {
-  const images = await listGalleryImages();
+  const images = await listAllGalleryImages();
   return <AdminGalleryImagesClient initial={images} />;
 }

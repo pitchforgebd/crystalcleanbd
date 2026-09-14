@@ -11,6 +11,7 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
   textareaClass,
 } from "@/components/admin/AdminUi";
@@ -21,8 +22,8 @@ import {
   updateGalleryVideo,
 } from "@/server/actions/gallery";
 
-type VideoDraft = { title: string; description: string; youtubeId: string; order: number };
-const emptyDraft: VideoDraft = { title: "", description: "", youtubeId: "", order: 1 };
+type VideoDraft = { title: string; description: string; youtubeId: string; order: number; active: boolean };
+const emptyDraft: VideoDraft = { title: "", description: "", youtubeId: "", order: 1, active: true };
 
 type Props = { initial: GalleryVideo[] };
 
@@ -53,12 +54,15 @@ export function AdminGalleryVideosClient({ initial }: Props) {
         description="Manage YouTube embeds by ID — videos are not downloaded or stored."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Order", "Title", "YouTube ID", "Actions"]}>
+        <AdminTable headers={["Order", "Title", "YouTube ID", "Status", "Actions"]}>
           {rows.map((video) => (
             <tr key={video.id} className="border-b border-[var(--line)] last:border-0">
               <td className="px-4 py-3">{video.order}</td>
               <td className="px-4 py-3 font-medium">{video.title}</td>
               <td className="px-4 py-3 text-[var(--ink-muted)]">{video.youtubeId}</td>
+              <td className="px-4 py-3">
+                <StatusBadge active={video.active} />
+              </td>
               <td className="px-4 py-3">
                 <div className="flex gap-3">
                   <button
@@ -71,6 +75,7 @@ export function AdminGalleryVideosClient({ initial }: Props) {
                         description: video.description,
                         youtubeId: video.youtubeId,
                         order: video.order,
+                        active: video.active,
                       });
                     }}
                   >
@@ -125,6 +130,14 @@ export function AdminGalleryVideosClient({ initial }: Props) {
                 }
               />
             </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown in the public gallery)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"

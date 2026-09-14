@@ -1,10 +1,6 @@
-// Minimal sitemap placeholder. Phase 6 will expand this to include dynamic
-// blog posts, services, and full per-page metadata.
-
 import { listServices } from "@/lib/repository/services";
 import { listBlogPosts } from "@/lib/repository/blog";
-
-const SITE_BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+import { getSiteBaseUrl } from "@/lib/site-url";
 
 const STATIC_PATHS = ["/", "/about", "/services", "/our-concern", "/gallery", "/blog", "/faq", "/contact"];
 
@@ -22,11 +18,15 @@ function xmlEscape(value: string): string {
 }
 
 export async function GET() {
-  const [services, posts] = await Promise.all([listServices(), listBlogPosts()]);
+  const [services, posts, siteBase] = await Promise.all([
+    listServices(),
+    listBlogPosts(),
+    getSiteBaseUrl(),
+  ]);
   const urls: { loc: string; lastmod?: string }[] = [];
-  for (const path of STATIC_PATHS) urls.push({ loc: `${SITE_BASE}${path}` });
-  for (const s of services) urls.push({ loc: `${SITE_BASE}/services/${s.slug}` });
-  for (const p of posts)    urls.push({ loc: `${SITE_BASE}/blog/${p.slug}` });
+  for (const path of STATIC_PATHS) urls.push({ loc: `${siteBase}${path}` });
+  for (const s of services) urls.push({ loc: `${siteBase}/services/${s.slug}` });
+  for (const p of posts)    urls.push({ loc: `${siteBase}/blog/${p.slug}` });
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

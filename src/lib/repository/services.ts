@@ -18,8 +18,14 @@ export async function listServices(opts?: {
   return rows.map(mapService);
 }
 
+/** Admin listing — includes inactive services so they can be reviewed and re-activated. */
+export async function listAllServices(): Promise<Service[]> {
+  const rows = await prisma.service.findMany({ orderBy: { order: "asc" } });
+  return rows.map(mapService);
+}
+
 export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  const row = await prisma.service.findUnique({ where: { slug } });
+  const row = await prisma.service.findFirst({ where: { slug, active: true } });
   return row ? mapService(row) : null;
 }
 

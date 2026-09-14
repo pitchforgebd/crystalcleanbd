@@ -8,13 +8,18 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { getAboutContent } from "@/lib/repository/about";
 import { listSocialLinks } from "@/lib/repository/social";
 import { getSiteInfo } from "@/lib/repository/site";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 import { phoneHref } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteInfo = await getSiteInfo();
+  const [siteInfo, pageSeo] = await Promise.all([getSiteInfo(), getPageSeoByPath("/contact")]);
   return {
-    title: "Contact Us",
-    description: `Contact ${siteInfo.brandName}. Phase 1 form is a front-end demo only.`,
+    title: pageSeo?.title || "Contact Us",
+    description:
+      pageSeo?.description ||
+      `Contact ${siteInfo.brandName} — send a message and we will get back to you.`,
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
   };
 }
 
@@ -30,7 +35,7 @@ export default async function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Tell us about your space"
-        description="Share a few details and we will follow up when live messaging is connected. This form is demo-only in Phase 1."
+        description="Share a few details and our team will follow up shortly."
         image={aboutContent?.contactImage}
         imageAlt={aboutContent?.contactImageAlt}
       />
@@ -116,7 +121,7 @@ export default async function ContactPage() {
               Send a request
             </h2>
             <p className="mt-2 text-sm text-[var(--ink-muted)]">
-              Validation runs in the browser. Submissions are not stored or emailed in Phase 1.
+              We typically respond within one business day.
             </p>
             <div className="mt-6">
               <ContactForm />

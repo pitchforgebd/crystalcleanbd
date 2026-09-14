@@ -36,6 +36,7 @@ export type Service = {
   featured: boolean;
   popular: boolean;
   order: number;
+  active: boolean;
 };
 
 export type ServiceReview = {
@@ -52,6 +53,8 @@ export type Statistic = {
   label: string;
   value: number;
   suffix: string;
+  order: number;
+  active: boolean;
 };
 
 export type Testimonial = {
@@ -61,6 +64,8 @@ export type Testimonial = {
   quote: string;
   avatarSrc: string;
   avatarAlt: string;
+  order: number;
+  active: boolean;
 };
 
 export type ClientLogo = {
@@ -68,6 +73,8 @@ export type ClientLogo = {
   name: string;
   logoSrc: string;
   logoAlt: string;
+  order: number;
+  active: boolean;
 };
 
 export type GalleryImage = {
@@ -77,6 +84,7 @@ export type GalleryImage = {
   description: string;
   src: string;
   order: number;
+  active: boolean;
 };
 
 export type GalleryVideo = {
@@ -85,6 +93,7 @@ export type GalleryVideo = {
   description: string;
   youtubeId: string;
   order: number;
+  active: boolean;
 };
 
 export type BlogCategory = {
@@ -107,6 +116,11 @@ export type BlogPost = {
   categorySlug: string;
   featured: boolean;
   tags: string[];
+  published: boolean;
+  seoTitle: string | null;
+  metaDescription: string | null;
+  ogImage: string | null;
+  canonical: string | null;
 };
 
 export type FaqItem = {
@@ -114,6 +128,7 @@ export type FaqItem = {
   question: string;
   answer: string;
   order: number;
+  active: boolean;
 };
 
 export type SocialLink = {
@@ -121,6 +136,8 @@ export type SocialLink = {
   platform: "facebook" | "instagram" | "youtube" | "linkedin" | "tiktok" | "whatsapp";
   label: string;
   href: string;
+  order: number;
+  active: boolean;
 };
 
 export type ConcernContent = {

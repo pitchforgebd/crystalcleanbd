@@ -5,12 +5,15 @@ import { Container } from "@/components/ui/Container";
 import { InnerCta } from "@/components/ui/InnerCta";
 import { PageHero } from "@/components/ui/PageHero";
 import { getConcernContent } from "@/lib/repository/concern";
+import { getPageSeoByPath } from "@/lib/repository/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const concern = await getConcernContent();
+  const [concern, pageSeo] = await Promise.all([getConcernContent(), getPageSeoByPath("/our-concern")]);
   return {
-    title: "Our Concern — Crystal Force",
-    description: concern?.tagline ?? "",
+    title: pageSeo?.title || "Our Concern — Crystal Force",
+    description: pageSeo?.description || concern?.tagline || "",
+    alternates: pageSeo?.canonical ? { canonical: pageSeo.canonical } : undefined,
+    openGraph: pageSeo?.ogImage ? { images: [{ url: pageSeo.ogImage }] } : undefined,
   };
 }
 

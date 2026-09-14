@@ -1,11 +1,11 @@
 import { getSeoSettings, getSiteSettingsRow } from "@/lib/repository/seo";
-import { listSocialLinks } from "@/lib/repository/social";
+import { listAllSocialLinks } from "@/lib/repository/social";
 import { AdminSettingsClient } from "@/app/admin/settings/AdminSettingsClient";
 
 export default async function AdminSettingsPage() {
   const [siteSettings, socialLinks, seoSettings] = await Promise.all([
     getSiteSettingsRow(),
-    listSocialLinks(),
+    listAllSocialLinks(),
     getSeoSettings(),
   ]);
   return (

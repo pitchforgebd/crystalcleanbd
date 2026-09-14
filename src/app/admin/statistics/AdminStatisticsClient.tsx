@@ -11,6 +11,7 @@ import {
   AdminPageHeader,
   AdminTable,
   Field,
+  StatusBadge,
   inputClass,
 } from "@/components/admin/AdminUi";
 import type { Statistic } from "@/lib/types";
@@ -20,8 +21,8 @@ import {
   updateStatistic,
 } from "@/server/actions/statistics";
 
-type StatisticDraft = { label: string; value: number; suffix: string; order: number };
-const emptyDraft: StatisticDraft = { label: "", value: 0, suffix: "+", order: 0 };
+type StatisticDraft = { label: string; value: number; suffix: string; order: number; active: boolean };
+const emptyDraft: StatisticDraft = { label: "", value: 0, suffix: "+", order: 0, active: true };
 
 type Props = { initial: Statistic[] };
 
@@ -34,15 +35,11 @@ export function AdminStatisticsClient({ initial }: Props) {
     update: updateStatistic,
     remove: deleteStatistic,
     noun: "Statistic",
-    toRow: (values, id) => ({
-      id,
-      label: values.label,
-      value: values.value,
-      suffix: values.suffix,
-    }),
-    onSaved: () => setDraft(emptyDraft),
+    toRow: (values, id) => ({ id, ...values }),
+    onSaved: () => setDraft({ ...emptyDraft, order: sorted.length }),
   });
   const { rows, editingId, setEditingId, feedback, message, isPending, save, destroy } = crud;
+  const sorted = [...rows].sort((a, b) => a.order - b.order);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -57,12 +54,16 @@ export function AdminStatisticsClient({ initial }: Props) {
         description="Manage animated counter values shown on the homepage."
       />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminTable headers={["Label", "Value", "Suffix", "Actions"]}>
-          {rows.map((stat) => (
+        <AdminTable headers={["Order", "Label", "Value", "Suffix", "Status", "Actions"]}>
+          {sorted.map((stat) => (
             <tr key={stat.id} className="border-b border-[var(--line)] last:border-0">
+              <td className="px-4 py-3 tabular-nums">{stat.order}</td>
               <td className="px-4 py-3 font-medium">{stat.label}</td>
               <td className="px-4 py-3">{stat.value}</td>
               <td className="px-4 py-3">{stat.suffix}</td>
+              <td className="px-4 py-3">
+                <StatusBadge active={stat.active} />
+              </td>
               <td className="px-4 py-3">
                 <div className="flex gap-3">
                   <button
@@ -74,7 +75,8 @@ export function AdminStatisticsClient({ initial }: Props) {
                         label: stat.label,
                         value: stat.value,
                         suffix: stat.suffix,
-                        order: rows.findIndex((row) => row.id === stat.id) + 1,
+                        order: stat.order,
+                        active: stat.active,
                       });
                     }}
                   >
@@ -118,6 +120,24 @@ export function AdminStatisticsClient({ initial }: Props) {
                 onChange={(event) => setDraft((c) => ({ ...c, suffix: event.target.value }))}
               />
             </Field>
+            <Field label="Order">
+              <input
+                type="number"
+                className={inputClass}
+                value={draft.order}
+                onChange={(event) =>
+                  setDraft((c) => ({ ...c, order: Number(event.target.value) || 0 }))
+                }
+              />
+            </Field>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(event) => setDraft((c) => ({ ...c, active: event.target.checked }))}
+              />
+              Active (shown on the homepage)
+            </label>
             <div className="flex items-center gap-3">
               <button
                 type="submit"
