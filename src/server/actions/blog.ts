@@ -49,6 +49,8 @@ export async function updateCategory(
     const row = await prisma.blogCategory.update({ where: { id }, data: parsed.data });
     revalidatePath("/admin/blog/categories");
     revalidatePath("/blog");
+    revalidatePath("/(public)/blog/category/[slug]", "page");
+    revalidatePath(`/blog/category/${row.slug}`);
     return { ok: true, data: row };
   } catch (err: unknown) {
     if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2002") {
@@ -70,9 +72,11 @@ export async function deleteCategory(
   const parsed = deleteCategorySchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "Invalid input." };
   try {
-    await prisma.blogCategory.delete({ where: { id: parsed.data.id } });
+    const row = await prisma.blogCategory.delete({ where: { id: parsed.data.id } });
     revalidatePath("/admin/blog/categories");
     revalidatePath("/blog");
+    revalidatePath("/(public)/blog/category/[slug]", "page");
+    revalidatePath(`/blog/category/${row.slug}`);
     return { ok: true };
   } catch (err: unknown) {
     if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2025") {
@@ -140,6 +144,10 @@ export async function updatePost(
     });
     revalidatePath("/admin/blog/posts");
     revalidatePath("/blog");
+    // A literal resolved path alone does not reach a page rendered by a
+    // generateStaticParams'd dynamic segment under a route group — the
+    // pattern form (route group included) is required to actually purge it.
+    revalidatePath("/(public)/blog/[slug]", "page");
     revalidatePath(`/blog/${row.slug}`);
     return { ok: true, data: row };
   } catch (err: unknown) {
@@ -162,9 +170,16 @@ export async function deletePost(
   const parsed = deletePostSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "Invalid input." };
   try {
-    await prisma.blogPost.delete({ where: { id: parsed.data.id } });
+    const row = await prisma.blogPost.delete({ where: { id: parsed.data.id } });
     revalidatePath("/admin/blog/posts");
     revalidatePath("/blog");
+    // A literal resolved path alone does not reach a page rendered by a
+    // generateStaticParams'd dynamic segment under a route group — Next keys
+    // that cache entry by the route FILE pattern, not the URL, so without
+    // the pattern form (route group included) the deleted post's page keeps
+    // serving its last cached copy instead of 404ing right away.
+    revalidatePath("/(public)/blog/[slug]", "page");
+    revalidatePath(`/blog/${row.slug}`);
     return { ok: true };
   } catch (err: unknown) {
     if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2025") {

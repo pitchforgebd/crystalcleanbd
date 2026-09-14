@@ -78,6 +78,11 @@ export async function updateService(
     });
     revalidatePath("/admin/services");
     revalidatePath("/services");
+    // A literal resolved path alone does not reach a page rendered by a
+    // generateStaticParams'd dynamic segment under a route group — Next keys
+    // that cache entry by the route FILE pattern, not the URL, so the
+    // pattern form (route group included) is required to actually purge it.
+    revalidatePath("/(public)/services/[slug]", "page");
     revalidatePath(`/services/${row.slug}`);
     revalidatePath("/");
     return { ok: true, data: row };
@@ -104,9 +109,15 @@ export async function deleteService(
   const parsed = deleteServiceSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: "Invalid input." };
   try {
-    await prisma.service.delete({ where: { id: parsed.data.id } });
+    const row = await prisma.service.delete({ where: { id: parsed.data.id } });
     revalidatePath("/admin/services");
     revalidatePath("/services");
+    // A literal resolved path alone does not reach a page rendered by a
+    // generateStaticParams'd dynamic segment under a route group — without
+    // the pattern form (route group included), the deleted service's detail
+    // page keeps serving its last cached copy instead of 404ing right away.
+    revalidatePath("/(public)/services/[slug]", "page");
+    revalidatePath(`/services/${row.slug}`);
     revalidatePath("/");
     return { ok: true };
   } catch (err: unknown) {
