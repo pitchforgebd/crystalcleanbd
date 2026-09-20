@@ -8,6 +8,7 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { getAboutContent } from "@/lib/repository/about";
 import { listSocialLinks } from "@/lib/repository/social";
 import { getSiteInfo } from "@/lib/repository/site";
+import { listContactEmails, listContactPhones } from "@/lib/repository/contact-info";
 import { getPageSeoByPath } from "@/lib/repository/seo";
 import { phoneHref } from "@/lib/utils";
 
@@ -24,11 +25,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const [aboutContent, siteInfo, socialLinks] = await Promise.all([
+  const [aboutContent, siteInfo, socialLinks, contactEmails, contactPhones] = await Promise.all([
     getAboutContent(),
     getSiteInfo(),
     listSocialLinks(),
+    listContactEmails(),
+    listContactPhones(),
   ]);
+
+  const emails = contactEmails.length > 0
+    ? contactEmails
+    : [{ id: "default", label: "", email: siteInfo.email }];
+  const phones = contactPhones.length > 0
+    ? contactPhones
+    : [{ id: "default", label: "", phone: siteInfo.phone }];
 
   return (
     <>
@@ -64,26 +74,40 @@ export default async function ContactPage() {
                   <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--brand)]">
                     <FiMail className="h-4 w-4" aria-hidden />
                   </span>
-                  <div>
+                  <div className="space-y-1">
                     <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-deep)]">
-                      Email
+                      {emails.length > 1 ? "Emails" : "Email"}
                     </span>
-                    <a href={`mailto:${siteInfo.email}`} className="hover:text-[var(--brand)]">
-                      {siteInfo.email}
-                    </a>
+                    {emails.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`mailto:${item.email}`}
+                        className="block hover:text-[var(--brand)]"
+                      >
+                        {item.label ? `${item.label}: ` : ""}
+                        {item.email}
+                      </a>
+                    ))}
                   </div>
                 </li>
                 <li className="flex gap-3">
                   <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--brand)]">
                     <FiPhone className="h-4 w-4" aria-hidden />
                   </span>
-                  <div>
+                  <div className="space-y-1">
                     <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-deep)]">
-                      Phone
+                      {phones.length > 1 ? "Phones" : "Phone"}
                     </span>
-                    <a href={phoneHref(siteInfo.phone)} className="hover:text-[var(--brand)]">
-                      {siteInfo.phone}
-                    </a>
+                    {phones.map((item) => (
+                      <a
+                        key={item.id}
+                        href={phoneHref(item.phone)}
+                        className="block hover:text-[var(--brand)]"
+                      >
+                        {item.label ? `${item.label}: ` : ""}
+                        {item.phone}
+                      </a>
+                    ))}
                   </div>
                 </li>
                 <li className="flex gap-3">

@@ -141,6 +141,22 @@ export type SocialLink = {
   active: boolean;
 };
 
+export type ContactEmail = {
+  id: string;
+  label: string;
+  email: string;
+  order: number;
+  active: boolean;
+};
+
+export type ContactPhone = {
+  id: string;
+  label: string;
+  phone: string;
+  order: number;
+  active: boolean;
+};
+
 export type ConcernContent = {
   name: string;
   tagline: string;

@@ -6,15 +6,25 @@ import { SocialIcon } from "@/components/ui/SocialIcon";
 import { listServices } from "@/lib/repository/services";
 import { listSocialLinks } from "@/lib/repository/social";
 import { getSiteInfo } from "@/lib/repository/site";
+import { listContactEmails, listContactPhones } from "@/lib/repository/contact-info";
 import { navLinks } from "@/lib/repository/nav";
 import { phoneHref } from "@/lib/utils";
 
 export async function Footer() {
-  const [siteInfo, services, socialLinks] = await Promise.all([
+  const [siteInfo, services, socialLinks, contactEmails, contactPhones] = await Promise.all([
     getSiteInfo(),
     listServices(),
     listSocialLinks(),
+    listContactEmails(),
+    listContactPhones(),
   ]);
+
+  const emails = contactEmails.length > 0
+    ? contactEmails
+    : [{ id: "default", label: "", email: siteInfo.email }];
+  const phones = contactPhones.length > 0
+    ? contactPhones
+    : [{ id: "default", label: "", phone: siteInfo.phone }];
 
   const year = new Date().getFullYear();
   const quickLinks = navLinks.filter((link) =>
@@ -129,22 +139,40 @@ export async function Footer() {
               <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
                 <FiMail className="h-3.5 w-3.5" aria-hidden />
               </span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.12em] text-white/75">Email</p>
-                <a href={`mailto:${siteInfo.email}`} className="hover:text-white">
-                  {siteInfo.email}
-                </a>
+              <div className="space-y-1">
+                <p className="text-xs uppercase tracking-[0.12em] text-white/75">
+                  {emails.length > 1 ? "Emails" : "Email"}
+                </p>
+                {emails.map((item) => (
+                  <a
+                    key={item.id}
+                    href={`mailto:${item.email}`}
+                    className="block hover:text-white"
+                  >
+                    {item.label ? `${item.label}: ` : ""}
+                    {item.email}
+                  </a>
+                ))}
               </div>
             </li>
             <li className="flex gap-3">
               <span className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
                 <FiPhone className="h-3.5 w-3.5" aria-hidden />
               </span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.12em] text-white/75">Phone</p>
-                <a href={phoneHref(siteInfo.phone)} className="hover:text-white">
-                  {siteInfo.phone}
-                </a>
+              <div className="space-y-1">
+                <p className="text-xs uppercase tracking-[0.12em] text-white/75">
+                  {phones.length > 1 ? "Phones" : "Phone"}
+                </p>
+                {phones.map((item) => (
+                  <a
+                    key={item.id}
+                    href={phoneHref(item.phone)}
+                    className="block hover:text-white"
+                  >
+                    {item.label ? `${item.label}: ` : ""}
+                    {item.phone}
+                  </a>
+                ))}
               </div>
             </li>
             <li className="flex gap-3">

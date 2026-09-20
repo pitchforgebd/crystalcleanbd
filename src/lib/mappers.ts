@@ -229,6 +229,24 @@ export function mapSocialLink(r: {
 }
 
 // ---------------------------------------------------------------------------
+// Contact channels
+// ---------------------------------------------------------------------------
+
+import type { ContactEmail, ContactPhone } from "@/lib/types";
+
+export function mapContactEmail(r: {
+  id: string; label: string; email: string; order: number; active: boolean;
+}): ContactEmail {
+  return { id: r.id, label: r.label, email: r.email, order: r.order, active: r.active };
+}
+
+export function mapContactPhone(r: {
+  id: string; label: string; phone: string; order: number; active: boolean;
+}): ContactPhone {
+  return { id: r.id, label: r.label, phone: r.phone, order: r.order, active: r.active };
+}
+
+// ---------------------------------------------------------------------------
 // About
 // ---------------------------------------------------------------------------
 

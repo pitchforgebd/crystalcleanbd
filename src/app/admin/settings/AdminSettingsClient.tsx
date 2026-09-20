@@ -10,9 +10,11 @@ import {
   textareaClass,
 } from "@/components/admin/AdminUi";
 import type { SiteSettings } from "@/lib/admin-types";
-import type { SocialLink } from "@/lib/types";
+import type { ContactEmail, ContactPhone, SocialLink } from "@/lib/types";
 import { ImageField } from "@/components/admin/ImageField";
 import { AdminSocialLinks } from "@/components/admin/AdminSocialLinks";
+import { AdminContactEmails } from "@/components/admin/AdminContactEmails";
+import { AdminContactPhones } from "@/components/admin/AdminContactPhones";
 import { LogoSize } from "@/components/admin/LogoSize";
 import { updateSiteSettings } from "@/server/actions/settings";
 
@@ -20,6 +22,8 @@ type Props = {
   initial: {
     siteSettings: SiteSettings;
     socialLinks: SocialLink[];
+    contactEmails: ContactEmail[];
+    contactPhones: ContactPhone[];
     ogImageLabel: string;
   };
 };
@@ -59,13 +63,13 @@ export function AdminSettingsClient({ initial }: Props) {
           <div className="space-y-4">
             {(
               [
-                ["brandName", "Brand name"],
-                ["tagline", "Tagline"],
-                ["email", "Email"],
-                ["phone", "Phone"],
+                ["brandName", "Brand name", undefined],
+                ["tagline", "Tagline", undefined],
+                ["email", "Email", "The single address shown in the top bar and header — for multiple emails, see Contact Emails below."],
+                ["phone", "Phone", "The single number shown in the top bar, header, and call buttons — for multiple numbers, see Contact Phone Numbers below."],
               ] as const
-            ).map(([key, label]) => (
-              <Field key={key} label={label}>
+            ).map(([key, label, hint]) => (
+              <Field key={key} label={label} hint={hint}>
                 <input
                   className={inputClass}
                   value={form[key]}
@@ -142,6 +146,11 @@ export function AdminSettingsClient({ initial }: Props) {
 
       <div className="mt-6">
         <AdminSocialLinks initial={initial.socialLinks} />
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <AdminContactEmails initial={initial.contactEmails} />
+        <AdminContactPhones initial={initial.contactPhones} />
       </div>
     </div>
   );

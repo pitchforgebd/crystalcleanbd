@@ -271,6 +271,33 @@ model SocialLink {
   @@index([active, order])
 }
 
+// -------- Contact channels (multiple emails/phones for footer + contact page) --------
+// SiteSettings.email/phone remain the single number/address shown in compact
+// spots (top bar, nav, CTA buttons); these lists feed the fuller footer and
+// contact-page displays where more than one contact point makes sense.
+
+model ContactEmail {
+  id        String   @id @default(cuid())
+  label     String   @db.VarChar(80)
+  email     String   @db.VarChar(160)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
+model ContactPhone {
+  id        String   @id @default(cuid())
+  label     String   @db.VarChar(80)
+  phone     String   @db.VarChar(64)
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+
+  @@index([active, order])
+}
+
 // -------- About / Concern / Legal (single-row content blocks) --------
 
 model AboutContent {
