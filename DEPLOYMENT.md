@@ -86,14 +86,47 @@ chmod 600 .env
 
 ## 3. Build and start
 
-From the application root, in cPanel Terminal (or "Run NPM Install" then the
-script runner):
+**First, activate the Node virtual environment.** A plain SSH/Terminal session
+does not have `npm`/`npx`/`node` on `PATH` — only cPanel's Node app environment
+does. Get the exact command from cPanel → **Setup Node.js App** → open the
+app → the banner at the top ("Enter to the virtual environment"). It looks
+like:
+
+```bash
+source /home/cpaneluser/nodevenv/crystal-clean/20/bin/activate && cd /home/cpaneluser/crystal-clean
+```
+
+Run that at the start of every terminal session before anything else below —
+copy it from the cPanel page rather than retyping it, the exact path and Node
+version are host-specific.
+
+From the application root:
 
 ```bash
 npm ci                     # installs dependencies and runs prisma generate
 npx prisma migrate deploy  # creates/updates the tables — never use migrate dev here
 npm run db:seed            # first deploy only: base content + the owner account
 ```
+
+**If any `npx prisma ...` command crashes with `Aborted (core dumped)`**
+(even `npx prisma -v` with no DB involved) — this is a native-binary crash in
+the Prisma CLI itself on some CloudLinux hosts, separate from the SWC build
+crash below. The app's own Prisma *client* (used at runtime) is unaffected;
+only the CLI is broken. Workarounds, in order of preference:
+1. Retry once or twice — on at least one host this was intermittent rather
+   than deterministic.
+2. Run the Prisma CLI from a different machine (e.g. your own dev machine)
+   pointed at the production database via `DATABASE_URL`, provided the host's
+   firewall allows it (see "Remote MySQL" in cPanel — note some hosts block
+   port 3306 externally regardless of the allow-list, in which case this
+   won't work either).
+3. As a last resort, apply a migration's SQL directly: copy the `.sql` from
+   `prisma/migrations/<name>/migration.sql`, run it with the plain `mysql`
+   CLI (a standard binary, unaffected by this crash), then mark it applied —
+   either `npx prisma migrate resolve --applied <name>` if the CLI happens to
+   work for that one subcommand, or insert the bookkeeping row into
+   `_prisma_migrations` by hand (ask Claude to walk through this if needed;
+   it's fiddly to get the checksum right).
 
 **`npm run build` may not work on this host — see [Building](#3a-building-a-cpanel-cpu-quirk) below before running it.**
 
@@ -153,7 +186,13 @@ version change on the host — the underlying binary compatibility may change.
 
 ## 4. After deploying — check these
 
-1. `https://yourdomain.com` loads, with images
+1. `https://yourdomain.com` loads, with images — **if you get a short response
+   with no `X-Powered-By: Next.js` header** (check with `curl -sI`), a
+   web-server-level cache (LiteSpeed/nginx) is serving a stale page from
+   before the app was correctly routing. Purge it: `curl -X PURGE
+   https://yourdomain.com/`, and check cPanel's home page for a "LiteSpeed Web
+   Cache Manager" icon and flush there too. Do this after every restart on a
+   host that has this cache layer, not just the first deploy.
 2. `https://yourdomain.com/admin` redirects to the login page, and your account signs in
 3. Admin → **Website Settings**: upload the logo, then confirm it shows on the site —
    this proves `UPLOAD_DIR` is writable and served
@@ -163,7 +202,8 @@ version change on the host — the underlying binary compatibility may change.
 5. Replace the demo content: address, email, social links, the WhatsApp number
    (it drives the floating chat button), services, testimonials, blog posts
 6. Admin → **SEO**: set the canonical base to your real domain, otherwise the
-   sitemap and canonical tags keep pointing at `example.com`
+   sitemap and canonical tags keep pointing at `example.com` — or set
+   `NEXT_PUBLIC_SITE_URL` in `.env`, which takes priority over it
 
 ---
 
@@ -176,8 +216,10 @@ npx prisma migrate deploy  # only needed when prisma/schema.prisma changed
 ```
 
 Then build (see [3a](#3a-building-a-cpanel-cpu-quirk) if `npm run build` crashes
-on this host) and **Restart** the Node app. Do not re-run `npm run db:seed` on an existing
-site: it resets seeded content such as hero slides and statistics.
+on this host) and **Restart** the Node app, then purge the page cache if the
+host has one (see step 1 in [section 4](#4-after-deploying--check-these)). Do
+not re-run `npm run db:seed` on an existing site: it resets seeded content
+such as hero slides and statistics.
 
 Keep the `UPLOAD_DIR` folder between deploys — it holds the client's photos.
 
@@ -208,6 +250,19 @@ it signs everyone out.
 **Passenger shows an application error**
 Check the log in cPanel → Setup Node.js App, and confirm the startup file is
 `server.js` and that `npm run build` finished successfully.
+
+**Homepage shows a plain directory listing, or an old/stale version of the site**
+A web-server-level cache (LiteSpeed/nginx), not the app, is serving a stale
+response — confirm with `curl -sI https://yourdomain.com/`: a real response
+has `X-Powered-By: Next.js`. Purge with `curl -X PURGE
+https://yourdomain.com/` and/or cPanel's "LiteSpeed Web Cache Manager". Check
+`~/public_html/.htaccess` still has the `PassengerAppRoot`/`PassengerBaseURI`
+block cPanel generates — if it's missing, re-save the app in Setup Node.js App
+to regenerate it.
+
+**`npx prisma ...` crashes with `Aborted (core dumped)`**
+See the note under [section 3](#3-build-and-start) — this is a CLI-only
+native-binary crash on some hosts, not a sign the app or database is broken.
 
 ---
 
